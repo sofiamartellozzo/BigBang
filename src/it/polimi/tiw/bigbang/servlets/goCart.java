@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Servlet implementation class goCart
  */
-@WebServlet("/goCart")
+
 public class goCart extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
