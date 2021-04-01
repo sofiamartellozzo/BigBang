@@ -3,7 +3,7 @@
   <display-name>BigBangEcommerce</display-name>
   <context-param>
     <param-name>dbUrl</param-name>
-    <param-value>jdbc:mysql://localhost:3306/ProgTIW</param-value>
+    <param-value>jdbc:mysql://localhost:3306/progtiw</param-value>
   </context-param>
   <context-param>
     <param-name>dbUser</param-name>
@@ -11,19 +11,20 @@
   </context-param>
   <context-param>
     <param-name>dbPassword</param-name>
-    <param-value>martellozzo</param-value>
+    <param-value>qwerty1qwerty2</param-value>
   </context-param>
   <context-param>
     <param-name>dbDriver</param-name>
     <param-value>com.mysql.cj.jdbc.Driver</param-value>
   </context-param>
+  
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
   
   <servlet>
     <servlet-name>doAddCart</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.doAddCart</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.doAddCart</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>doAddCart</servlet-name>
@@ -32,7 +33,7 @@
   
   <servlet>
     <servlet-name>doLogin</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.doLogin</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.doLogin</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>doLogin</servlet-name>
@@ -41,7 +42,7 @@
   
   <servlet>
     <servlet-name>doOrder</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.doOrder</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.doOrder</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>doOrder</servlet-name>
@@ -50,7 +51,7 @@
   
   <servlet>
     <servlet-name>doSearch</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.doSearch</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.doSearch</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>doSearch</servlet-name>
@@ -59,7 +60,7 @@
   
   <servlet>
     <servlet-name>goCart</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.goCart</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.goCart</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>goCart</servlet-name>
@@ -68,7 +69,7 @@
   
   <servlet>
     <servlet-name>goHome</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.goHome</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.goHome</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>goHome</servlet-name>
@@ -77,10 +78,10 @@
   
   <servlet>
     <servlet-name>goOrders</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.servlets.goOrders</servlet-class>
+    <servlet-class>it.polimi.tiw.bigbang.controllers.goOrders</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>goOrders</servlet-name>
-    <url-pattern>/goOrders</url-pattern>
+    <url-pattern>/orders</url-pattern>
   </servlet-mapping>
 </web-app>

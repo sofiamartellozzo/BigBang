@@ -1,4 +1,4 @@
-package it.polimi.tiw.bigbang.servlets;
+package it.polimi.tiw.bigbang.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -6,7 +6,6 @@ import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,10 +19,6 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.dao.UserDAO;
 import it.polimi.tiw.bigbang.utils.ConnectionHandler;
-
-/**
- * Servlet implementation class doLogin
- */
 
 public class doLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -50,8 +45,8 @@ public class doLogin extends HttpServlet {
 		String usrn = null;
 		String pwd = null;
 		try {
-			//usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
-			//pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
+			// usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
+			// pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
 			usrn = request.getParameter("name");
 			pwd = request.getParameter("pwd");
 			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
