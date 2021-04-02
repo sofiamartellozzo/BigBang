@@ -11,12 +11,10 @@ public class ConnectionHandler {
 	public static Connection getConnection(ServletContext context) throws UnavailableException {
 		Connection connection = null;
 		try {
-
 			String driver = context.getInitParameter("dbDriver");
 			String url = context.getInitParameter("dbUrl");
 			String user = context.getInitParameter("dbUser");
 			String password = context.getInitParameter("dbPassword");
-			System.out.println(driver + url + user + password);
 			Class.forName(driver);
 			connection = DriverManager.getConnection(url, user, password);
 		} catch (ClassNotFoundException e) {
