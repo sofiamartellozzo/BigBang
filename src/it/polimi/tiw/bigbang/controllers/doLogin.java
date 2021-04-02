@@ -77,7 +77,7 @@ public class doLogin extends HttpServlet {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 			ctx.setVariable("errorMsg", "Incorrect email or password");
-			path = "/index.html";
+			path = "/login.html";
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);

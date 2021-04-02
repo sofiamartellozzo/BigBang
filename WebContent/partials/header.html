@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <nav>
+    	<p>Welcome, <span th:text="${user.name+' '+user.surname}">Full Name</span></p>
+    	<p th:text="${user.address}">Address</p>
+    	<a th:href="@{/cart}">cart</a>
+    	<a th:href="@{/orders}">orders</a>
+    	<form th:action="@{/search}" method="GET">
+    		<input type="text" name="keyword" placeholder="search...">
+    	</form>
+    </nav>
+  </body>
+</html>
