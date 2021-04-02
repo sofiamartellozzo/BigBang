@@ -9,7 +9,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 public class TemplateEngineProvider {
 	
 	public static TemplateEngine getTemplateEngine(ServletContext context) {
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
+		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(context);
 		templateResolver.setTemplateMode(TemplateMode.HTML);
 		templateResolver.setSuffix(".html");
 		TemplateEngine templateEngine = new TemplateEngine();
