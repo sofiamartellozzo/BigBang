@@ -19,7 +19,7 @@ public class ItemDAO {
 
 	public ArrayList<Item> findItemsById(ArrayList<Integer> items) throws SQLException {
 		
-		String query = "SELECT  id, name, description, category, picture FROM user  WHERE id = ?";
+		String query = "SELECT  id, name, description, category, picture FROM item  WHERE id = ?";
 		List<Item> cartItems = new ArrayList<Item>();
 		for(Integer i: items) {
 			try (PreparedStatement pstatement = con.prepareStatement(query);) {
@@ -32,7 +32,7 @@ public class ItemDAO {
 						Item item = new Item();
 						item.setId(result.getInt("id"));
 						item.setName(result.getString("name"));
-						item.setDescription(result.getString("desctiprion"));
+						item.setDescription(result.getString("desctiption"));
 						item.setCategory(result.getString("category"));
 						item.setPicture(result.getString("picture"));
 						cartItems.add(item);
@@ -41,6 +41,34 @@ public class ItemDAO {
 			}
 		}
 		return (ArrayList<Item>) cartItems;
+	}
+	
+	public ArrayList<Item> findItemsByWord(String research) throws SQLException{
+		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  '%'||?||'%'  OR description LIKE  '%'||?||'%' ";
+		List<Item> searchItems = new ArrayList<Item>();
+		try(PreparedStatement pstatement = con.prepareStatement(query);){
+			pstatement.setString(1, research);
+			pstatement.setString(2, research);
+			try(ResultSet result = pstatement.executeQuery();){
+				if (!result.isBeforeFirst())
+					return null;
+				else {
+					while(result.next()) {
+						Item item = new Item();
+						item.setId(result.getInt("id"));
+						item.setName(result.getString("name"));
+						item.setDescription(result.getString("description"));
+						item.setCategory(result.getString("category"));
+						item.setPicture(result.getString("picture"));
+						searchItems.add(item);
+					}
+					
+	
+				}
+			}
+		}
+		
+		return (ArrayList<Item>) searchItems;
 	}
 
 }
