@@ -3,6 +3,7 @@ package it.polimi.tiw.bigbang.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -81,6 +82,7 @@ public class doLogin extends HttpServlet {
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
+			request.getSession().setAttribute("items", new ArrayList<Integer>());
 			path = getServletContext().getContextPath() + "/home";
 			response.sendRedirect(path);
 		}
