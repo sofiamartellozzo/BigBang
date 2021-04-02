@@ -18,6 +18,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.Item;
+import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.utils.ConnectionHandler;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -39,9 +40,11 @@ public class goCart extends HttpServlet {
 		
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "null" })
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		
 		
 		// If the user is not logged in (not present in session) redirect to the login
 				String loginpath = getServletContext().getContextPath() + "/login.html";
@@ -56,7 +59,9 @@ public class goCart extends HttpServlet {
 			ArrayList<Integer> items = null;
 	
 				try {
-					items = (ArrayList<Integer>) session.getAttribute("items"); 
+					items.add(1);
+					items.add(2);
+					//items = (ArrayList<Integer>) session.getAttribute("items"); 
 				} catch (NumberFormatException | NullPointerException e) {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
 					return;
@@ -70,11 +75,10 @@ public class goCart extends HttpServlet {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				String path = "cart.html";
-				RequestDispatcher dispatcher = request.getRequestDispatcher(path);
-				dispatcher.forward(request, response);
+				
+				String path = "/cart.html";
 				final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
-				ctx.setVariable("cartItems", cartItem);
+				ctx.setVariable("cartItem", cartItem);
 				templateEngine.process(path, ctx, response.getWriter());
 	}
 

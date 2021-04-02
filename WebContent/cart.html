@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="ISO-8859-1" />
-    <title>Cart page</title>
-  </head>
-  <body>
-    cart 
-  </body>
+<head>
+<title>Cart page</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link rel="stylesheet" type="text/css" media="all" href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
+</head>
+<body>
+	<div th:replace="~{partials/header :: nav}"></div>
+	<table>
+	<caption>Check and proceed to order </caption>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Category</th>
+        <th>Picture</th>
+      </tr>
+      <tr th:each="item : ${cartItem}">
+        <td th:text="${item.name}">Onions</td>
+        <td th:text="${item.description}">2.41</td>
+        <td th:text="${item.category}">2.41</td>
+        <td th:text="${item.picture}">2.41</td>
+      </tr>
+    </table>
+</body>
 </html>
