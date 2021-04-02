@@ -22,6 +22,7 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.utils.ConnectionHandler;
+import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -31,29 +32,20 @@ import javax.servlet.http.HttpServletResponse;
 
 public class doSearch extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection = null;
 	
+	private Connection connection;
 	private TemplateEngine templateEngine;
 
-	public doSearch() {
-		super();
-	}
-
 	public void init() throws ServletException {
-		connection = ConnectionHandler.getConnection(getServletContext());
 		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
+		connection = ConnectionHandler.getConnection(servletContext);
+		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-
-		// Get the search paramether, so the items asked
+		// Get the search parameter, so the items asked
 		String itemSearch = null;
 		try {
 			itemSearch = request.getParameter("keyword");
@@ -75,7 +67,7 @@ public class doSearch extends HttpServlet {
 		}
 
 		// Redirect to the search Page with the items found
-		String path = "/search.html";
+		String path = "search";
 		ServletContext servletContext = getServletContext();
 		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 		ctx.setVariable("items", searchItems);

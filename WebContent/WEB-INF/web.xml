@@ -20,6 +20,15 @@
 		<param-name>dbDriver</param-name>
 		<param-value>com.mysql.cj.jdbc.Driver</param-value>
 	</context-param>
+	
+	<filter>
+		<filter-name>CheckQuery</filter-name>
+		<filter-class>it.polimi.tiw.bigbang.filters.CheckQuery</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CheckQuery</filter-name>
+		<url-pattern>*</url-pattern>
+	</filter-mapping>
 
 	<filter>
 		<filter-name>CheckLogin</filter-name>
@@ -34,10 +43,6 @@
 		<url-pattern>/doOrder</url-pattern>
 		<url-pattern>/doAddCart</url-pattern>
 	</filter-mapping>
-
-	<welcome-file-list>
-		<welcome-file>login.html</welcome-file>
-	</welcome-file-list>
 
 	<servlet>
 		<servlet-name>doAddCart</servlet-name>
@@ -54,7 +59,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>doLogin</servlet-name>
-		<url-pattern>/doLogin</url-pattern>
+		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
 
 	<servlet>

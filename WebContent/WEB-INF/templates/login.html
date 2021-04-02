@@ -3,25 +3,7 @@
   <head>
     <meta charset="ISO-8859-1" />
     <title>Login page</title>
-    <style>
-      .box {
-        top: 50%;
-        left: 50%;
-        margin: auto;
-        width: 30%;
-        border: 3px solid gray;
-        padding: 10px;
-        text-align: center;
-        background-color: gray;
-        opacity: 0.6;
-      }
-      body {
-        background-image: url("images/doLoginBackground.jpg");
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        background-size: cover;
-      }
-    </style>
+    <link rel="stylesheet" href="./css/style.css" th:href="@{/css/style.css}" >
   </head>
   <body>
     <div class="box">
@@ -29,7 +11,7 @@
         <h1>BigBang</h1>
         <h2>a new frontier of e-commerce</h2>
 
-        <form action="doLogin" method="POST">
+        <form action="login" method="POST">
           <input type="email" placeholder="email" name="email" required /> <br />
           <br />
           <input

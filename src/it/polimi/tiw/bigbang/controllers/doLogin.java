@@ -14,30 +14,28 @@ import javax.servlet.http.HttpServletResponse;
 //import org.apache.commons.lang.StringEscapeUtils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.dao.UserDAO;
 import it.polimi.tiw.bigbang.utils.ConnectionHandler;
+import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 public class doLogin extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	private Connection connection = null;
+	private Connection connection;
 	private TemplateEngine templateEngine;
 
-	public doLogin() {
-		super();
+	public void init() throws ServletException {
+		ServletContext servletContext = getServletContext();
+		connection = ConnectionHandler.getConnection(servletContext);
+		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
-	public void init() throws ServletException {
-		connection = ConnectionHandler.getConnection(getServletContext());
-		ServletContext servletContext = getServletContext();
-		ServletContextTemplateResolver templateResolver = new ServletContextTemplateResolver(servletContext);
-		templateResolver.setTemplateMode(TemplateMode.HTML);
-		this.templateEngine = new TemplateEngine();
-		this.templateEngine.setTemplateResolver(templateResolver);
-		templateResolver.setSuffix(".html");
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		final WebContext ctx = new WebContext(request, response, getServletContext(), request.getLocale());
+		String path = "login";
+		templateEngine.process(path, ctx, response.getWriter());
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -78,7 +76,7 @@ public class doLogin extends HttpServlet {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
 			ctx.setVariable("errorMsg", "Incorrect email or password");
-			path = "/login.html";
+			path = "login";
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);

@@ -26,6 +26,7 @@ import it.polimi.tiw.bigbang.dao.ItemDAO;
 
 public class goHome extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
 	private TemplateEngine templateEngine;
 	private Connection connection;
 	private ServletContext servletContext;
@@ -42,20 +43,20 @@ public class goHome extends HttpServlet {
 		HttpSession session = request.getSession();
 
 		User user = (User) session.getAttribute("user");
-		
+
 		ItemDAO itemDAO = new ItemDAO(connection);
-		ArrayList<Item> items = null;		
+		ArrayList<Item> items = null;
 		try {
 			items = itemDAO.findLastViewedItemsByUser(user.getId());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (items.isEmpty() || items.size() < 5) {
 			ArrayList<Item> fillerItems = null;
-			
+
 			try {
-				fillerItems = itemDAO.findNItemsByCategory("Books", 5);				
+				fillerItems = itemDAO.findNItemsByCategory("Books", 5);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
@@ -71,11 +72,13 @@ public class goHome extends HttpServlet {
 				if (!found && items.size() < 5) {
 					items.add(fillerItem);
 				}
-				if (items.size() == 5) break;
+				if (items.size() == 5)
+					break;
 			}
-		};
-		
-		String path = "/index.html";
+		}
+		;
+
+		String path = "home";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("lastViewedItems", items);
 		webContext.setVariable("user", user);

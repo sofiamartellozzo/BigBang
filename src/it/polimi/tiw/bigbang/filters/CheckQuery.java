@@ -10,31 +10,22 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import it.polimi.tiw.bigbang.beans.User;
-
-@WebFilter("/CheckLogin")
-public class CheckLogin implements Filter {
+public class CheckQuery implements Filter {
 
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
+
 		String loginpath = req.getServletContext().getContextPath() + "/login";
-
-		HttpSession session = req.getSession();
-
-		if (session.isNew() || session.getAttribute("user") == null) {
+		if (req.getRequestURI().equals(req.getServletContext().getContextPath() + "/")) {
 			res.sendRedirect(loginpath);
 			return;
 		}
 
+		// pass the request along the filter chain
 		chain.doFilter(request, response);
 	}
-
-	public void init(FilterConfig fConfig) throws ServletException {
-	}
-
 }
