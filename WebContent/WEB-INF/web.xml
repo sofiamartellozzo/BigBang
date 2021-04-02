@@ -1,87 +1,102 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
-  <display-name>BigBangEcommerce</display-name>
-  <context-param>
-    <param-name>dbUrl</param-name>
-    <param-value>jdbc:mysql://localhost:3306/ProgTIW</param-value>
-  </context-param>
-  <context-param>
-    <param-name>dbUser</param-name>
-    <param-value>gruppo43</param-value>
-  </context-param>
-  <context-param>
-    <param-name>dbPassword</param-name>
-    <param-value>gruppo43</param-value>
-  </context-param>
-  <context-param>
-    <param-name>dbDriver</param-name>
-    <param-value>com.mysql.cj.jdbc.Driver</param-value>
-  </context-param>
-  
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-  </welcome-file-list>
-  
-  <servlet>
-    <servlet-name>doAddCart</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.doAddCart</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>doAddCart</servlet-name>
-    <url-pattern>/doAddCart</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>doLogin</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.doLogin</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>doLogin</servlet-name>
-    <url-pattern>/doLogin</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>doOrder</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.doOrder</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>doOrder</servlet-name>
-    <url-pattern>/doOrder</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>doSearch</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.doSearch</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>doSearch</servlet-name>
-    <url-pattern>/search</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>goCart</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.goCart</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>goCart</servlet-name>
-    <url-pattern>/cart</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>goHome</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.goHome</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>goHome</servlet-name>
-    <url-pattern>/home</url-pattern>
-  </servlet-mapping>
-  
-  <servlet>
-    <servlet-name>goOrders</servlet-name>
-    <servlet-class>it.polimi.tiw.bigbang.controllers.goOrders</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>goOrders</servlet-name>
-    <url-pattern>/orders</url-pattern>
-  </servlet-mapping>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+	<display-name>BigBangEcommerce</display-name>
+	<context-param>
+		<param-name>dbUrl</param-name>
+		<param-value>jdbc:mysql://localhost:3306/ProgTIW</param-value>
+	</context-param>
+	<context-param>
+		<param-name>dbUser</param-name>
+		<param-value>gruppo43</param-value>
+	</context-param>
+	<context-param>
+		<param-name>dbPassword</param-name>
+		<param-value>gruppo43</param-value>
+	</context-param>
+	<context-param>
+		<param-name>dbDriver</param-name>
+		<param-value>com.mysql.cj.jdbc.Driver</param-value>
+	</context-param>
+
+	<filter>
+		<filter-name>CheckLogin</filter-name>
+		<filter-class>it.polimi.tiw.bigbang.filters.CheckLogin</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>CheckLogin</filter-name>
+		<url-pattern>/home</url-pattern>
+		<url-pattern>/cart</url-pattern>
+		<url-pattern>/orders</url-pattern>
+		<url-pattern>/search</url-pattern>
+	</filter-mapping>
+
+	<welcome-file-list>
+		<welcome-file>login.html</welcome-file>
+	</welcome-file-list>
+
+	<servlet>
+		<servlet-name>doAddCart</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doAddCart</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doAddCart</servlet-name>
+		<url-pattern>/doAddCart</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>doLogin</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doLogin</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doLogin</servlet-name>
+		<url-pattern>/doLogin</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>doOrder</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doOrder</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doOrder</servlet-name>
+		<url-pattern>/doOrder</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>doSearch</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doSearch</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doSearch</servlet-name>
+		<url-pattern>/search</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>goCart</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.goCart</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>goCart</servlet-name>
+		<url-pattern>/cart</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>goHome</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.goHome</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>goHome</servlet-name>
+		<url-pattern>/home</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>goOrders</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.goOrders</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>goOrders</servlet-name>
+		<url-pattern>/orders</url-pattern>
+	</servlet-mapping>
 </web-app>

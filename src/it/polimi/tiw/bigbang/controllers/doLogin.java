@@ -42,14 +42,14 @@ public class doLogin extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// obtain and escape params
-		String usrn = null;
+		String email = null;
 		String pwd = null;
 		try {
 			// usrn = StringEscapeUtils.escapeJava(request.getParameter("username"));
 			// pwd = StringEscapeUtils.escapeJava(request.getParameter("pwd"));
-			usrn = request.getParameter("name");
+			email = request.getParameter("email");
 			pwd = request.getParameter("pwd");
-			if (usrn == null || pwd == null || usrn.isEmpty() || pwd.isEmpty()) {
+			if (email == null || pwd == null || email.isEmpty() || pwd.isEmpty()) {
 				throw new Exception("Missing or empty credential value");
 			}
 
@@ -63,7 +63,7 @@ public class doLogin extends HttpServlet {
 		UserDAO userDao = new UserDAO(connection);
 		User user = null;
 		try {
-			user = userDao.checkCredentials(usrn, pwd);
+			user = userDao.checkCredentials(email, pwd);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to check credentials");
 			return;
@@ -76,12 +76,12 @@ public class doLogin extends HttpServlet {
 		if (user == null) {
 			ServletContext servletContext = getServletContext();
 			final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-			ctx.setVariable("errorMsg", "Incorrect username or password");
+			ctx.setVariable("errorMsg", "Incorrect email or password");
 			path = "/index.html";
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
-			path = getServletContext().getContextPath() + "/Home";
+			path = getServletContext().getContextPath() + "/home";
 			response.sendRedirect(path);
 		}
 

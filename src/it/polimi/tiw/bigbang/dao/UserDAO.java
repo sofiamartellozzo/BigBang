@@ -14,10 +14,10 @@ public class UserDAO {
 		this.con = connection;
 	}
 
-	public User checkCredentials(String usrn, String pwd) throws SQLException {
-		String query = "SELECT  id, name, surname, email, address FROM user  WHERE name = ? AND password =?";
+	public User checkCredentials(String email, String pwd) throws SQLException {
+		String query = "SELECT  id, name, surname, email, address FROM user  WHERE email = ? AND password =?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
-			pstatement.setString(1, usrn);
+			pstatement.setString(1, email);
 			pstatement.setString(2, pwd);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
