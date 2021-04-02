@@ -31,6 +31,8 @@
 		<url-pattern>/cart</url-pattern>
 		<url-pattern>/orders</url-pattern>
 		<url-pattern>/search</url-pattern>
+		<url-pattern>/doOrder</url-pattern>
+		<url-pattern>/doAddCart</url-pattern>
 	</filter-mapping>
 
 	<welcome-file-list>
