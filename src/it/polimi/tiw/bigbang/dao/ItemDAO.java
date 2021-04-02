@@ -42,5 +42,60 @@ public class ItemDAO {
 		}
 		return (ArrayList<Item>) cartItems;
 	}
+	
+	public ArrayList<Item> findLastViewedItemsByUser(int userID) throws SQLException {
+		
+		String query = "SELECT I.* FROM item AS I, view as V WHERE V.id_user = ? AND V.id_item = I.id ORDER BY data LIMIT 5";
+		
+		ArrayList<Item> viewedItems = new ArrayList<>();
+		
+		try (PreparedStatement pStatement = con.prepareStatement(query)) {
+			pStatement.setInt(1, userID);
+			
+			try (ResultSet result = pStatement.executeQuery()) {
+				if (result.isBeforeFirst())
+					while (result.next()) {
+						Item item = new Item() {{
+							setId(result.getInt("id"));
+							setName(result.getString("name"));
+							setDescription(result.getString("description"));
+							setCategory(result.getString("category"));
+							setPicture(result.getString("picture"));
+						}};
+						viewedItems.add(item);
+					}
+			}
+		}
+		
+		return viewedItems;
+	}
+	
+	public ArrayList<Item> findNItemsByCategory(String category, int number) throws SQLException {
+		
+		String query = "SELECT * FROM item WHERE category = ? LIMIT ?";
+		
+		ArrayList<Item> viewedItems = new ArrayList<>();
+		
+		try (PreparedStatement pStatement = con.prepareStatement(query)) {
+			pStatement.setString(1, category);
+			pStatement.setInt(2, number);
+			
+			try (ResultSet result = pStatement.executeQuery()) {
+				if (result.isBeforeFirst())
+					while (result.next()) {
+						Item item = new Item() {{
+							setId(result.getInt("id"));
+							setName(result.getString("name"));
+							setDescription(result.getString("description"));
+							setCategory(result.getString("category"));
+							setPicture(result.getString("picture"));
+						}};
+						viewedItems.add(item);
+					}
+			}
+		}
+		
+		return viewedItems;
+	}
 
 }
