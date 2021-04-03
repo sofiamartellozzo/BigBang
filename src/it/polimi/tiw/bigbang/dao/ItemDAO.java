@@ -16,13 +16,15 @@ public class ItemDAO {
 		this.con = connection;
 	}
 
-	public ArrayList<Item> findItemsById(ArrayList<Integer> items) throws SQLException {
+	public List<Item> findItemsById(ArrayList<Integer> items) throws SQLException {
 
-		String query = "SELECT  id, name, description, category, picture FROM item  WHERE id = ?";
+		String query = "SELECT * FROM item WHERE id = ?";
 		List<Item> cartItems = new ArrayList<Item>();
-		for (Integer i : items) {
+		
+		for(Integer i: items) {
 			try (PreparedStatement pstatement = con.prepareStatement(query);) {
 				pstatement.setInt(1, i);
+				
 				try (ResultSet result = pstatement.executeQuery();) {
 					if (!result.isBeforeFirst()) // no results
 						return null;
@@ -35,11 +37,11 @@ public class ItemDAO {
 						item.setCategory(result.getString("category"));
 						item.setPicture(result.getString("picture"));
 						cartItems.add(item);
+						}
 					}
 				}
-			}
 		}
-		return (ArrayList<Item>) cartItems;
+		return cartItems;
 	}
 
 	public ArrayList<Item> findLastViewedItemsByUser(int userID) throws SQLException {

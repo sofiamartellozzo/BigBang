@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<title>Cart page</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" type="text/css" media="all" href="css/mystyle.css" th:href="@{/css/mystyle.css}" />
-</head>
-<body>
-	<div th:replace="~{partials/header :: nav}"></div>
-	<table>
-	<caption>Check and proceed to order </caption>
+  <head>
+    <meta charset="ISO-8859-1" />
+    <title>Cart page</title>
+  </head>
+  <body>
+    <div th:replace="~{partials/header :: nav}"></div>
+    <h1>Check and proceed to order</h1>
+  	<table>
       <tr>
-        <th>Name</th>
-        <th>Description</th>
-        <th>Category</th>
-        <th>Picture</th>
+        <th>NAME</th>
+        <th>DESCRIPTION</th>
+        <th>CATEGORY</th>
+        <th>PICTURE</th>
       </tr>
-      <tr th:each="item : ${cartItem}">
-        <td th:text="${item.name}">Onions</td>
-        <td th:text="${item.description}">2.41</td>
-        <td th:text="${item.category}">2.41</td>
-        <td th:text="${item.picture}">2.41</td>
+      <tr th:each="item : ${lastViewedItems}">
+        <td th:text="${item.name}">name</td>
+        <td th:text="${item.description}">description</td>
+        <td th:text="${item.category}">category</td>
+        <td th:text="${item.picture}">picture</td>
       </tr>
     </table>
-</body>
+  </body>
 </html>
