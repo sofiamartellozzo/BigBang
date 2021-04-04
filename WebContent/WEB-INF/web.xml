@@ -22,26 +22,12 @@
 	</context-param>
 	
 	<filter>
-		<filter-name>CheckQuery</filter-name>
-		<filter-class>it.polimi.tiw.bigbang.filters.CheckQuery</filter-class>
+		<filter-name>QueryFilter</filter-name>
+		<filter-class>it.polimi.tiw.bigbang.filters.QueryFilter</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>CheckQuery</filter-name>
+		<filter-name>QueryFilter</filter-name>
 		<url-pattern>*</url-pattern>
-	</filter-mapping>
-
-	<filter>
-		<filter-name>CheckLogin</filter-name>
-		<filter-class>it.polimi.tiw.bigbang.filters.CheckLogin</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>CheckLogin</filter-name>
-		<url-pattern>/home</url-pattern>
-		<url-pattern>/cart</url-pattern>
-		<url-pattern>/orders</url-pattern>
-		<url-pattern>/search</url-pattern>
-		<url-pattern>/doOrder</url-pattern>
-		<url-pattern>/doAddCart</url-pattern>
 	</filter-mapping>
 
 	<servlet>
@@ -60,6 +46,15 @@
 	<servlet-mapping>
 		<servlet-name>doLogin</servlet-name>
 		<url-pattern>/login</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>doLogout</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doLogout</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doLogout</servlet-name>
+		<url-pattern>/logout</url-pattern>
 	</servlet-mapping>
 
 	<servlet>
