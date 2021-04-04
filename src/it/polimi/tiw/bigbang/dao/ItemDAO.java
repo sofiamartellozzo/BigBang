@@ -46,7 +46,7 @@ public class ItemDAO {
 
 	public ArrayList<Item> findLastViewedItemsByUser(int userID) throws SQLException {
 
-		String query = "SELECT I.* FROM item AS I, view as V WHERE V.id_user = ? AND V.id_item = I.id ORDER BY data LIMIT 5";
+		String query = "SELECT I.* FROM item AS I, view as V WHERE V.id_user = ? AND V.id_item = I.id ORDER BY date LIMIT 5";
 
 		ArrayList<Item> viewedItems = new ArrayList<>();
 
