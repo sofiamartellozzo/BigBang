@@ -24,13 +24,9 @@ public class QueryFilter implements Filter {
 		HttpSession session = req.getSession();
 
 		String requestURI = req.getRequestURI();
-		System.out.println("execute filter");
-		System.out.println(requestURI);
 
 		if (session.isNew() || session.getAttribute("user") == null) {
-			System.out.println("new session");
 			if (isPathResource(requestURI) || requestURI.endsWith("/login")) {
-				System.out.println("resource");
 				chain.doFilter(request, response);
 				return;
 			} else {
@@ -44,7 +40,6 @@ public class QueryFilter implements Filter {
 				Arrays.asList("/home", "/cart", "/orders", "/search", "/doAddCart", "/doOrder"));
 
 		if (!allowedPaths.contains(requestURI.replace(req.getContextPath(), "")) && !isPathResource(requestURI)) {
-			System.out.println("send home");
 			String homePath = req.getServletContext().getContextPath() + "/home";
 			res.sendRedirect(homePath);
 			return;
