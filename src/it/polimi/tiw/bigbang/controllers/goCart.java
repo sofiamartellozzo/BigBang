@@ -40,37 +40,45 @@ public class goCart extends HttpServlet {
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
-	@SuppressWarnings({ "null" })
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
 		HttpSession session = request.getSession();
-
 		User user = (User) session.getAttribute("user");
 		
-		// Get params
-		ArrayList<Integer> items = new ArrayList<Integer>();
-		
+	
+		//Get all details about items added to cart 
+		List<Integer> items = new ArrayList<Integer>(); //items added to cart from session
 		
 		try {
-			items.add(1);
-			items.add(2);
-			// items = (ArrayList<Integer>) session.getAttribute("items");
+			items = (ArrayList<Integer>) session.getAttribute("items");
 		} catch (NumberFormatException | NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
 			return;
 		}
-
+		
 		ItemDAO IDAO = new ItemDAO(connection);
 		List<Item> cartItem = new ArrayList<Item>();
 		
 		try {
 			
-			cartItem = IDAO.findItemsById(items);
+			cartItem = IDAO.findItemsById((ArrayList<Integer>) items);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		
+		//quando aggiungo al carrello scegliendo il vendiotre mi crea un item in cui specifico item,vendor,prezzo
+		//per ogni vendor leggo le politiche, il numero di articoli nel carrello e calcolo il totale
+		//creando il dao ordine
+		
+		List<Integer> vendors = new ArrayList<Integer>(); //name, score and free ship
+		
+		List<Integer> shippigPolicy = new ArrayList<Integer>(); //id of shipping policy
+		
+		List<Integer> range  = new ArrayList<Integer>();  //shipping cost
+		
+		
 		String path = "cart";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("cartItem", cartItem);
@@ -81,7 +89,8 @@ public class goCart extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		doGet(request, response);
+		
+		
 	}
 
 	public void destroy() {

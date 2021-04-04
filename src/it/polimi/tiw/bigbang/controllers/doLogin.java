@@ -80,7 +80,7 @@ public class doLogin extends HttpServlet {
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
-			request.getSession().setAttribute("items", new ArrayList<Integer>());
+			request.getSession().setAttribute("items", new ArrayList<Integer>(){{add(1); add(2);}});
 			path = getServletContext().getContextPath() + "/home";
 			response.sendRedirect(path);
 		}

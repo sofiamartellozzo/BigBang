@@ -14,12 +14,16 @@
         <th>CATEGORY</th>
         <th>PICTURE</th>
       </tr>
-      <tr th:each="item : ${lastViewedItems}">
+      <tr th:each="item : ${cartItem}">
         <td th:text="${item.name}">name</td>
         <td th:text="${item.description}">description</td>
         <td th:text="${item.category}">category</td>
         <td th:text="${item.picture}">picture</td>
       </tr>
     </table>
+    <br>
+   <form th:action="@{/doOrder?vendorId=}" method="POST">
+  <button type="submit">Order</button>
+</form>
   </body>
 </html>
