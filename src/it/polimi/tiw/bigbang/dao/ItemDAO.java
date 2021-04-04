@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.tiw.bigbang.beans.Item;
+import it.polimi.tiw.bigbang.beans.Price;
 
 public class ItemDAO {
 	private Connection con;
@@ -102,7 +103,7 @@ public class ItemDAO {
 	}
 
 	public ArrayList<Item> findItemsByWord(String research) throws SQLException {
-		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  '%'||?||'%'  OR description LIKE  '%'||?||'%' ";
+		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%', ?, '%') OR description LIKE  concat('%', ?, '%') ";
 		List<Item> searchItems = new ArrayList<Item>();
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, research);

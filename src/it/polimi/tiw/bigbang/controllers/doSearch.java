@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -19,8 +21,13 @@ import org.thymeleaf.context.WebContext;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
+import it.polimi.tiw.bigbang.beans.ExtendedItem;
 import it.polimi.tiw.bigbang.beans.Item;
+import it.polimi.tiw.bigbang.beans.Price;
+import it.polimi.tiw.bigbang.beans.Vendor;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
+import it.polimi.tiw.bigbang.dao.PriceDAO;
+import it.polimi.tiw.bigbang.dao.VendorDAO;
 import it.polimi.tiw.bigbang.utils.ConnectionHandler;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -58,20 +65,45 @@ public class doSearch extends HttpServlet {
 		}
 
 		ItemDAO itemDAO = new ItemDAO(connection);
+		PriceDAO priceDAO = new PriceDAO(connection);
+		VendorDAO vendorDAO = new VendorDAO(connection);
 		ArrayList<Item> searchItems = new ArrayList<>();
+		ArrayList<Integer> idItems = new ArrayList<>();
+		ArrayList<Integer> idVendor = new ArrayList<>();
+		ArrayList<Price> priceOfItems = new ArrayList<>();
+		ArrayList<Vendor> vendorOfItems = new ArrayList<>();
+		ArrayList<ExtendedItem> finalItemsSearch = new ArrayList<>();
+		HashMap<Vendor, Price> association = new HashMap<>();
 		try {
 			searchItems = itemDAO.findItemsByWord(itemSearch);
+			for (Item item: searchItems) {
+				idItems.add(item.getId());
+			}
+			priceOfItems = priceDAO.findLowerPriceByItemId(idItems);
+			for (Price price : priceOfItems) {
+				idVendor.add(price.getIdVendor());
+			}
+			vendorOfItems = vendorDAO.findById(idVendor);
+			for (int i=0; i<searchItems.size();i++) {
+				ExtendedItem extendedItem = new ExtendedItem();
+				extendedItem.setItem(searchItems.get(i));
+				association.put(vendorOfItems.get(i), priceOfItems.get(i));
+				extendedItem.setValue(association);
+				finalItemsSearch.add(extendedItem);
+			}
+			
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to find items");
+			e.printStackTrace();
 			return;
 		}
 
 		// Redirect to the search Page with the items found
 		String path = "search";
 		ServletContext servletContext = getServletContext();
-		final WebContext ctx = new WebContext(request, response, servletContext, request.getLocale());
-		ctx.setVariable("items", searchItems);
-		templateEngine.process(path, ctx, response.getWriter());
+		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		webContext.setVariable("searchItem", finalItemsSearch);
+		templateEngine.process(path, webContext, response.getWriter());
 	}
 
 	public void destroy() {

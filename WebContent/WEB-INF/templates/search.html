@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Search page</title>
+</head>
+<body>
+	<table>
+		<tr>
+			<th>Code</th>
+			<th>Name</th>
+			<th>Price</th>
+		</tr>
+		<tr th:each="item : ${searchItem}">
+			<td th:text="${item.item.id}">Id</td>
+			<td th:text="${item.item.name}">Name</td>
+			<td th:each="vendor : ${item.value.keySet()}">
+				<p th:text="${item.value.get(vendor).price}">Price</p>
+			</td>
+		</tr>
+	</table>
+</body>
+</html>

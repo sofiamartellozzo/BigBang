@@ -6,6 +6,7 @@ public class Item {
 	private String description;
 	private String category;
 	private String picture;
+	
 	public int getId() {
 		return id;
 	}
@@ -36,6 +37,8 @@ public class Item {
 	public void setPicture(String picture) {
 		this.picture = picture;
 	}
+	
+	
 	
 	
 
