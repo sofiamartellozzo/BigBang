@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import it.polimi.tiw.bigbang.utils.ConnectionHandler;
+import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
@@ -34,7 +34,7 @@ public class goHome extends HttpServlet {
 	public void init() throws ServletException {
 		servletContext = getServletContext();
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
-		connection = ConnectionHandler.getConnection(servletContext);
+		connection = DBConnectionProvider.getConnection(servletContext);
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)

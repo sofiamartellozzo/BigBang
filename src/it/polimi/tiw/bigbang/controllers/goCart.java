@@ -19,7 +19,7 @@ import org.thymeleaf.context.WebContext;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
-import it.polimi.tiw.bigbang.utils.ConnectionHandler;
+import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 public class goCart extends HttpServlet {
@@ -36,7 +36,7 @@ public class goCart extends HttpServlet {
 
 	public void init() throws ServletException {
 		servletContext = getServletContext();
-		connection = ConnectionHandler.getConnection(servletContext);
+		connection = DBConnectionProvider.getConnection(servletContext);
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
@@ -86,7 +86,7 @@ public class goCart extends HttpServlet {
 
 	public void destroy() {
 		try {
-			ConnectionHandler.closeConnection(connection);
+			DBConnectionProvider.closeConnection(connection);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
