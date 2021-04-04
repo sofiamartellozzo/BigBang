@@ -47,6 +47,15 @@
 		<servlet-name>doLogin</servlet-name>
 		<url-pattern>/login</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>doLogout</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doLogout</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doLogout</servlet-name>
+		<url-pattern>/logout</url-pattern>
+	</servlet-mapping>
 
 	<servlet>
 		<servlet-name>doOrder</servlet-name>
