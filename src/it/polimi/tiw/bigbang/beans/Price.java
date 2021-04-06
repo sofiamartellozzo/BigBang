@@ -4,6 +4,7 @@ public class Price {
 	private float price;
 	private int idItem;
 	private int idVendor;
+	
 	public float getPrice() {
 		return price;
 	}
@@ -22,6 +23,4 @@ public class Price {
 	public void setIdVendor(int idVendor) {
 		this.idVendor = idVendor;
 	}
-	
-
 }

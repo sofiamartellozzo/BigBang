@@ -83,7 +83,7 @@ public class doSearch extends HttpServlet {
 			for (Price price : priceOfItems) {
 				idVendor.add(price.getIdVendor());
 			}
-			vendorOfItems = vendorDAO.findById(idVendor);
+			vendorOfItems = (ArrayList<Vendor>) vendorDAO.findById(idVendor);
 			for (int i=0; i<searchItems.size();i++) {
 				ExtendedItem extendedItem = new ExtendedItem();
 				extendedItem.setItem(searchItems.get(i));

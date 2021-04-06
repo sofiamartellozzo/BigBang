@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,7 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import it.polimi.tiw.bigbang.beans.Price;
+import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.User;
+import it.polimi.tiw.bigbang.beans.Vendor;
 import it.polimi.tiw.bigbang.dao.UserDAO;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -38,6 +43,7 @@ public class doLogin extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
+	@SuppressWarnings("serial")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// obtain and escape params
@@ -80,11 +86,10 @@ public class doLogin extends HttpServlet {
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
-			request.getSession().setAttribute("items", new ArrayList<Integer>(){{add(1); add(2);}});
+			request.getSession().setAttribute("cart", new HashMap<Vendor,List<SelectedItem>>());
 			path = getServletContext().getContextPath() + "/home";
 			response.sendRedirect(path);
 		}
-
 	}
 
 	public void destroy() {
