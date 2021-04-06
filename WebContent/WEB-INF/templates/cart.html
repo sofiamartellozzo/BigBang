@@ -1,16 +1,67 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="ISO-8859-1" />
-    <title>Cart page</title>
-  </head>
-  <body>
-    <div th:replace="~{partials/header :: nav}"></div>
-    <h1>Check and proceed to order</h1>
+<head>
+<meta charset="ISO-8859-1" />
+<title>Cart page</title>
+</head>
+<body>
+	<div th:replace="~{partials/header :: nav}"></div>
+	<h1>Check and proceed to order</h1>
 
-    <br>
-   <form th:action="@{/doOrder?vendorId=}" method="POST">
-  <button type="submit">Order</button>
-</form>
- </body>
+	<table width="50%" th:each="cart : ${cart}"
+		th:with="vendor=${cart.key},itemselected=${cart.value}">
+		<tr>
+			<td><h2>[[${vendor.name}]]</h2></td>
+			<td colspan=4 align="right"><h2 th:switch="${vendor.score}">
+			<span th:case="1"> &#9734; &#9734; &#9734; &#9734; &#9733;</span>
+			<span th:case="2"> &#9734; &#9734; &#9734; &#9733; &#9733;</span>
+			<span th:case="3"> &#9734; &#9734; &#9733; &#9733; &#9733; </span>
+			<span th:case="4"> &#9734;&#9733; &#9733; &#9733; &#9733; </span>
+			<span th:case="5"> &#9733; &#9733; &#9733; &#9733; &#9733;</span>
+			</h2></td>
+		</tr>
+		<tr th:each="entry : ${itemselected}">
+			<td th:text="${entry.item.name}"></td>
+			<td align="center">
+				<form th:action="@{/doAddCart?vendorId=}" method="POST">
+					<button type="submit">-</button>
+				</form>
+			</td>
+			<td align="center" th:text="${entry.quantity}"></td>
+			<td align="center">
+				<form th:action="@{/doAddCart?vendorId=}" method="POST">
+					<button type="submit">+</button>
+				</form>
+			</td>
+			<td align="right"><span>[[${entry.cost}]]&euro;</span></td>
+		</tr>
+		<tr>
+			<td>Shipping Cost:</td>
+			<td colspan=4 align="right">
+				<div th:each="shipping : ${shipping}"
+					th:with="vendor2=${shipping.key},costs=${shipping.value}">
+					<span th:if="${vendor2.id == vendor.id}">[[${costs[0]}]]&euro;</span>
+				</div>
+			</td>
+		</tr>
+		<tr>
+			<td>Total:</td>
+			<td colspan=4 align="right">
+				<div th:each="shipping : ${shipping}"
+					th:with="vendor2=${shipping.key},costs=${shipping.value}">
+					<strong th:if="${vendor2.id == vendor.id}">[[${costs[1]}]]&euro;</strong>
+				</div>
+			</td>
+		</tr>
+		<tr><td></td></tr>
+		<tr>
+			<td colspan=5 align="right">
+				<form th:action="@{/doOrder?vendorId=}" method="POST">
+					<button type="submit">Order</button>
+				</form>
+			</td>
+		</tr>
+		<tr></tr>
+	</table>
+</body>
 </html>

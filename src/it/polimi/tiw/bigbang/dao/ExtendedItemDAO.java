@@ -58,7 +58,7 @@ public class ExtendedItemDAO {
 
 			ExtendedItem extendedItem = new ExtendedItem();
 			extendedItem.setItem(itemIdItemMap.get(itemID));
-			extendedItem.setValue(new LinkedHashMap<>());
+			extendedItem.setValue(new LinkedHashMap<Vendor, Price>());
 			for (Vendor vendor : itemVendors) {
 				extendedItem.getValue().put(vendor, vendorIdPriceMap.get(vendor.getId()));
 			}
