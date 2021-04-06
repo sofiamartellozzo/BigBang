@@ -20,8 +20,10 @@ import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
+import it.polimi.tiw.bigbang.beans.ExtendedItem;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
+import it.polimi.tiw.bigbang.dao.ExtendedItemDAO;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 
 public class goHome extends HttpServlet {
@@ -76,11 +78,15 @@ public class goHome extends HttpServlet {
 					break;
 			}
 		}
-		;
+		
+		List<ExtendedItem> extendedItems = new ArrayList<>();
+		ExtendedItemDAO extendedItemDAO = new ExtendedItemDAO(connection);
+		
+		extendedItems = extendedItemDAO.findAllItemDetails(items);
 
 		String path = "home";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("lastViewedItems", items);
+		webContext.setVariable("lastViewedItems", extendedItems);
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
 	}

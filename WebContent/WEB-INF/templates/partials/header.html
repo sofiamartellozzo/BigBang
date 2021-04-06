@@ -4,6 +4,7 @@
     <nav>
     	<p>Welcome, <span th:text="${user.name+' '+user.surname}">Full Name</span></p>
     	<p th:text="${user.address}">Address</p>
+    	<a th:href="@{/home}">home</a>
     	<a th:href="@{/cart}">cart</a>
     	<a th:href="@{/orders}">orders</a>
     	<form th:action="@{/search}" method="GET">

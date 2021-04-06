@@ -9,10 +9,10 @@
     <h1>Orders</h1>
 	<div th:each="order : ${orders}">
 		<hr>
-		<p>ORDER ID: [[${order.id}]]</p>
-		<p>at [[${order.date}]]</p>
+		<strong>ORDER ID: [[${order.id}]]</strong><br>
+		<strong>at [[${order.date}]]</strong>
 		<div th:each="entry : ${order.items}" th:with="item=${entry.key},quantity=${entry.value}">
-			<p>[[${item.name}]] - [[${quantity}]] times</p>
+			<p>[[${quantity}]]x [[${item.name}]]</p>
 		</div>
     </div>
     <hr>
