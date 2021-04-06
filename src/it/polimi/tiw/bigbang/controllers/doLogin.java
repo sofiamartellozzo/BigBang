@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -16,7 +18,9 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.Price;
+import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.User;
+import it.polimi.tiw.bigbang.beans.Vendor;
 import it.polimi.tiw.bigbang.dao.UserDAO;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -82,12 +86,7 @@ public class doLogin extends HttpServlet {
 			templateEngine.process(path, ctx, response.getWriter());
 		} else {
 			request.getSession().setAttribute("user", user);
-			final Price p= new Price();
-			p.setIdItem(11);
-			p.setIdVendor(2);
-			p.setPrice(4);
-			p.setQuantity(2);
-			request.getSession().setAttribute("itemInCart", new ArrayList<Price>(){{add(p);}});
+			request.getSession().setAttribute("cart", new HashMap<Vendor,List<SelectedItem>>());
 			path = getServletContext().getContextPath() + "/home";
 			response.sendRedirect(path);
 		}

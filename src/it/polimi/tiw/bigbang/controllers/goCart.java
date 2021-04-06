@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -17,15 +18,11 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.Item;
-import it.polimi.tiw.bigbang.beans.ItemCart;
+import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.Price;
-import it.polimi.tiw.bigbang.beans.Shipping;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
-import it.polimi.tiw.bigbang.beans.VendorItemCart;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
-import it.polimi.tiw.bigbang.dao.ShippingDAO;
-import it.polimi.tiw.bigbang.dao.VendorDAO;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -54,15 +51,19 @@ public class goCart extends HttpServlet {
 		
 	
 		//Get items added to cart 
-		List<Price> itemInCart = new ArrayList<Price>(); //items added to cart from session
+		HashMap<Vendor,List<SelectedItem>> cart = new HashMap<Vendor,List<SelectedItem>>(); //items added to cart from session
 		
 		try {
-			itemInCart = (ArrayList<Price>) session.getAttribute("itemInCart");
+			cart = (HashMap<Vendor, List<SelectedItem>>) session.getAttribute("cart");
 		} catch (NumberFormatException | NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
 			return;
 		}
 		
+		//ricostruire il carrello 
+		//calcolare la spedizione e il totale
+		
+		/**
 		//Search all different vendors in Cart
 			List<Integer> vendorInCart = new ArrayList<Integer>();
 			
@@ -95,7 +96,7 @@ public class goCart extends HttpServlet {
 				
 				for(Price p: itemInCart) {
 					if(p.getIdVendor()==v) {
-						ItemCart ic = new ItemCart();
+						SelectedItem ic = new SelectedItem();
 						
 						ItemDAO iDAO = new ItemDAO(connection);
 						Item item = new Item();
@@ -134,13 +135,13 @@ public class goCart extends HttpServlet {
 				
 				vendorList.add(vic);
 			}
+			*/
 		
 		String path = "cart";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("vendorList", vendorList);
+		webContext.setVariable("cart", cart);
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
-		
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)

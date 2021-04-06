@@ -1,10 +1,21 @@
 package it.polimi.tiw.bigbang.beans;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Vendor {
 	private int id;
 	private String name;
 	private int score;
 	private int free_limit;
+	private List<ShippingRange> ranges;
+	
+	public List<ShippingRange> getRanges() {
+		return ranges;
+	}
+	public void setRanges(List<ShippingRange> ranges) {
+		this.ranges = ranges;
+	}
 	public int getId() {
 		return id;
 	}

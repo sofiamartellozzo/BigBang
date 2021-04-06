@@ -81,7 +81,7 @@ public class goOrders extends HttpServlet {
 		ItemDAO itemDAO = new ItemDAO(connection);
 		List<OrderModel> orderModels = new ArrayList<>();		
 		for (int i = 0; i < orders.size(); i++) {
-			Order currentOrder = orders.get(i);
+			final Order currentOrder = orders.get(i);
 			Item currentItem = null;
 			try {
 				currentItem = itemDAO.findItemsById(new ArrayList<Integer>() {{
