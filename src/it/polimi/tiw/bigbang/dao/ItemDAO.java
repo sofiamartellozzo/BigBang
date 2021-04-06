@@ -16,6 +16,30 @@ public class ItemDAO {
 	public ItemDAO(Connection connection) {
 		this.con = connection;
 	}
+	
+	public Item findItemsBySingleId(int items) throws SQLException {
+
+		String query = "SELECT * FROM item WHERE id = ?";
+		
+			try (PreparedStatement pstatement = con.prepareStatement(query);) {
+				pstatement.setInt(1, items);
+				
+				try (ResultSet result = pstatement.executeQuery();) {
+					if (!result.isBeforeFirst()) // no results
+						return null;
+					else {
+						result.next();
+						Item item = new Item();
+						item.setId(result.getInt("id"));
+						item.setName(result.getString("name"));
+						item.setDescription(result.getString("description"));
+						item.setCategory(result.getString("category"));
+						item.setPicture(result.getString("picture"));
+						return item;
+						}
+					}
+				}
+	}
 
 	public List<Item> findItemsById(ArrayList<Integer> items) throws SQLException {
 

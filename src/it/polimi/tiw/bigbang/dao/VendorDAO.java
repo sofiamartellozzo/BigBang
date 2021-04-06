@@ -39,6 +39,25 @@ public class VendorDAO {
 			}
 		}
 		return vendors;
+	}
 		
+	public Vendor findBySingleId(Integer vendor) throws SQLException{
+		String query = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
+			try (PreparedStatement pstatement = con.prepareStatement(query);) {
+				pstatement.setInt(1, vendor);
+				try (ResultSet result = pstatement.executeQuery();) {
+					if (!result.isBeforeFirst()) 
+						return null;
+					else {
+						result.next();
+						Vendor v = new Vendor();
+						v.setId(result.getInt("id"));
+						v.setName(result.getString("name"));
+						v.setScore(result.getInt("score"));
+						v.setFree_limit(result.getInt("free_limit"));
+						return v;
+					}
+				}
+			}
 	}
 }

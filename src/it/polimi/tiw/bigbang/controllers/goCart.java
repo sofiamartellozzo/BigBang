@@ -17,8 +17,15 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.Item;
+import it.polimi.tiw.bigbang.beans.ItemCart;
+import it.polimi.tiw.bigbang.beans.Price;
+import it.polimi.tiw.bigbang.beans.Shipping;
 import it.polimi.tiw.bigbang.beans.User;
+import it.polimi.tiw.bigbang.beans.Vendor;
+import it.polimi.tiw.bigbang.beans.VendorItemCart;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
+import it.polimi.tiw.bigbang.dao.ShippingDAO;
+import it.polimi.tiw.bigbang.dao.VendorDAO;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -30,9 +37,7 @@ public class goCart extends HttpServlet {
 	
 	public goCart() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-
 
 	public void init() throws ServletException {
 		servletContext = getServletContext();
@@ -40,6 +45,7 @@ public class goCart extends HttpServlet {
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -47,41 +53,91 @@ public class goCart extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		
 	
-		//Get all details about items added to cart 
-		List<Integer> items = new ArrayList<Integer>(); //items added to cart from session
+		//Get items added to cart 
+		List<Price> itemInCart = new ArrayList<Price>(); //items added to cart from session
 		
 		try {
-			items = (ArrayList<Integer>) session.getAttribute("items");
+			itemInCart = (ArrayList<Price>) session.getAttribute("itemInCart");
 		} catch (NumberFormatException | NullPointerException e) {
 			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
 			return;
 		}
 		
-		ItemDAO IDAO = new ItemDAO(connection);
-		List<Item> cartItem = new ArrayList<Item>();
-		
-		try {
+		//Search all different vendors in Cart
+			List<Integer> vendorInCart = new ArrayList<Integer>();
 			
-			cartItem = IDAO.findItemsById((ArrayList<Integer>) items);
+			for(Price p: itemInCart) {
+				if(!(vendorInCart.contains(p.getIdVendor()))) {vendorInCart.add(p.getIdVendor());}
+			}
+		
+		//For each vendor create a list of items sold by him 
+			List<VendorItemCart> vendorList = new ArrayList<VendorItemCart>();
 			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		
-		//quando aggiungo al carrello scegliendo il vendiotre mi crea un item in cui specifico item,vendor,prezzo
-		//per ogni vendor leggo le politiche, il numero di articoli nel carrello e calcolo il totale
-		//creando il dao ordine
-		
-		List<Integer> vendors = new ArrayList<Integer>(); //name, score and free ship
-		
-		List<Integer> shippigPolicy = new ArrayList<Integer>(); //id of shipping policy
-		
-		List<Integer> range  = new ArrayList<Integer>();  //shipping cost
-		
+			for(int v: vendorInCart) {
+				
+				//collect informations about vendor
+				
+				VendorItemCart vic= new VendorItemCart();
+				VendorDAO vDAO = new VendorDAO(connection);
+				Vendor vendor = new Vendor();
+				try {
+					
+					vendor = vDAO.findBySingleId(v);
+					
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				vic.setVendorName(vendor.getName());
+				vic.setVendorScore(vendor.getScore());
+				
+				//collect information about items sold by vendor
+				
+				for(Price p: itemInCart) {
+					if(p.getIdVendor()==v) {
+						ItemCart ic = new ItemCart();
+						
+						ItemDAO iDAO = new ItemDAO(connection);
+						Item item = new Item();
+						try {
+							
+							item = iDAO.findItemsBySingleId(p.getIdItem());
+							
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+						
+						ic.setCost(p.getPrice());
+						ic.setIdItem(p.getIdItem());
+						ic.setItemName(item.getName());
+						ic.setQuantities(p.getQuantity());
+						vic.setItemVendor(ic);
+					}
+				}
+				
+				//collect information about shipping policy
+				
+				System.out.println(vic.getItemVendor().size());
+				
+				ShippingDAO sDAO = new ShippingDAO(connection);
+				Shipping s= new Shipping();
+				try {
+					
+					s = sDAO.findShippingPriceById(v, vic.getItemVendor().size());
+					
+				}catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+				if(vic.getItemVendor().size()>=s.getFreeLimit()) {vic.setShippingCost(0);}
+				else {vic.setShippingCost(s.getShippingCost());}
+				
+				vendorList.add(vic);
+			}
 		
 		String path = "cart";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("cartItem", cartItem);
+		webContext.setVariable("vendorList", vendorList);
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
 		

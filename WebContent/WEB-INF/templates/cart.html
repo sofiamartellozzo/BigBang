@@ -7,23 +7,21 @@
   <body>
     <div th:replace="~{partials/header :: nav}"></div>
     <h1>Check and proceed to order</h1>
-  	<table>
-      <tr>
-        <th>NAME</th>
-        <th>DESCRIPTION</th>
-        <th>CATEGORY</th>
-        <th>PICTURE</th>
-      </tr>
-      <tr th:each="item : ${cartItem}">
-        <td th:text="${item.name}">name</td>
-        <td th:text="${item.description}">description</td>
-        <td th:text="${item.category}">category</td>
-        <td th:text="${item.picture}">picture</td>
-      </tr>
+    
+    <table th:each="vendorList : ${vendorList}">
+    
+    <tr>
+    <td th:text="${vendorList.vendorName}"> name </td>
+    <td th:text="${vendorList.vendorScore}">score</td>
+    <td th:each="vendorList.itemVendor : ${vendorList.itemVendor}" >
+    <p th:text="${vendorList.itemVendor.itemName}"> name </p>
+    <p th:text="${vendorList.itemVendor.cost}"> cost </p>
+    </td>
     </table>
+
     <br>
    <form th:action="@{/doOrder?vendorId=}" method="POST">
   <button type="submit">Order</button>
 </form>
-  </body>
+ </body>
 </html>
