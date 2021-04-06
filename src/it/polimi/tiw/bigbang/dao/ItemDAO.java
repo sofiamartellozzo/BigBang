@@ -129,11 +129,12 @@ public class ItemDAO {
 	}
 
 	public List<Item> findItemsByWord(String research) throws SQLException {
-		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%', ?, '%') OR description LIKE  concat('%', ?, '%') ";
+		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%', ?, '%') OR description LIKE  concat('%', ?, '%') OR category LIKE  concat('%', ?, '%') ";
 		List<Item> searchItems = new ArrayList<Item>();
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, research);
 			pstatement.setString(2, research);
+			pstatement.setString(3, research);
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (result.isBeforeFirst()) {
 					while (result.next()) {
