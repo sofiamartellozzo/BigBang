@@ -20,7 +20,7 @@ public class VendorDAO {
 
 	public List<Vendor> findById(List<Integer> vendorIDs) throws SQLException {
 		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
-		String shippingRangeQuery = "SELECT R.* FROM range R, shipping_policy SP WHERE R.id = SP.id_range AND SP.id_vendor = ?";
+		String shippingRangeQuery = "SELECT R.* FROM `range` R, shipping_policy SP WHERE R.id = SP.id_range AND SP.id_vendor = ?";
 		List<Vendor> vendors = new ArrayList<Vendor>();
 		for (Integer id : vendorIDs) {
 			try (PreparedStatement pStatementVendors = con.prepareStatement(vendorsQuery);) {
