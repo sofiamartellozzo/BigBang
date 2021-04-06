@@ -88,7 +88,7 @@ public Map<Integer, List<Price>> findManyByItemIDs(List<Integer> itemIDs) throws
 	       Price price = new Price();
 	       price.setIdItem(result.getInt("id_item"));
 	       price.setIdVendor(result.getInt("id_vendor"));
-	       price.setPrice(result.getInt("price"));
+	       price.setPrice(result.getFloat("price"));
 	       currentItemPrices.add(price);
 	      }
 	     }

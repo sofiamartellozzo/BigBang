@@ -69,11 +69,11 @@ public class ItemDAO {
 		return cartItems;
 	}
 
-	public ArrayList<Item> findLastViewedItemsByUser(int userID) throws SQLException {
+	public List<Item> findLastViewedItemsByUser(int userID) throws SQLException {
 
 		String query = "SELECT I.* FROM item AS I, view as V WHERE V.id_user = ? AND V.id_item = I.id ORDER BY date LIMIT 5";
 
-		ArrayList<Item> viewedItems = new ArrayList<>();
+		List<Item> viewedItems = new ArrayList<>();
 
 		try (PreparedStatement pStatement = con.prepareStatement(query)) {
 			pStatement.setInt(1, userID);
@@ -98,11 +98,11 @@ public class ItemDAO {
 		return viewedItems;
 	}
 
-	public ArrayList<Item> findNItemsByCategory(String category, int number) throws SQLException {
+	public List<Item> findNItemsByCategory(String category, int number) throws SQLException {
 
 		String query = "SELECT * FROM item WHERE category = ? LIMIT ?";
 
-		ArrayList<Item> viewedItems = new ArrayList<>();
+		List<Item> viewedItems = new ArrayList<>();
 
 		try (PreparedStatement pStatement = con.prepareStatement(query)) {
 			pStatement.setString(1, category);
@@ -128,16 +128,14 @@ public class ItemDAO {
 		return viewedItems;
 	}
 
-	public ArrayList<Item> findItemsByWord(String research) throws SQLException {
+	public List<Item> findItemsByWord(String research) throws SQLException {
 		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%', ?, '%') OR description LIKE  concat('%', ?, '%') ";
 		List<Item> searchItems = new ArrayList<Item>();
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, research);
 			pstatement.setString(2, research);
 			try (ResultSet result = pstatement.executeQuery();) {
-				if (!result.isBeforeFirst())
-					return null;
-				else {
+				if (result.isBeforeFirst()) {
 					while (result.next()) {
 						Item item = new Item();
 						item.setId(result.getInt("id"));
@@ -152,7 +150,7 @@ public class ItemDAO {
 			}
 		}
 
-		return (ArrayList<Item>) searchItems;
+		return searchItems;
 	}
 
 }

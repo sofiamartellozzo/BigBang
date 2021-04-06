@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -24,7 +25,9 @@ import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import it.polimi.tiw.bigbang.beans.ExtendedItem;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
+import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
+import it.polimi.tiw.bigbang.dao.ExtendedItemDAO;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
@@ -51,6 +54,9 @@ public class doSearch extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		
+		HttpSession session = request.getSession();
+		User user = (User) session.getAttribute("user");
 
 		// Get the search parameter, so the items asked
 		String itemSearch = null;
@@ -65,32 +71,14 @@ public class doSearch extends HttpServlet {
 		}
 
 		ItemDAO itemDAO = new ItemDAO(connection);
-		PriceDAO priceDAO = new PriceDAO(connection);
-		VendorDAO vendorDAO = new VendorDAO(connection);
-		ArrayList<Item> searchItems = new ArrayList<>();
-		ArrayList<Integer> idItems = new ArrayList<>();
-		ArrayList<Integer> idVendor = new ArrayList<>();
-		ArrayList<Price> priceOfItems = new ArrayList<>();
-		ArrayList<Vendor> vendorOfItems = new ArrayList<>();
-		ArrayList<ExtendedItem> finalItemsSearch = new ArrayList<>();
+		ExtendedItemDAO extendedItemDAO = new ExtendedItemDAO(connection);
+		List<Item> searchItems = new ArrayList<>();
+		List<ExtendedItem> finalItemSearch = new ArrayList<>();
 		HashMap<Vendor, Price> association = new HashMap<>();
 		try {
 			searchItems = itemDAO.findItemsByWord(itemSearch);
-			for (Item item: searchItems) {
-				idItems.add(item.getId());
-			}
-			priceOfItems = priceDAO.findLowerPriceByItemId(idItems);
-			for (Price price : priceOfItems) {
-				idVendor.add(price.getIdVendor());
-			}
-			vendorOfItems = (ArrayList<Vendor>) vendorDAO.findById(idVendor);
-			for (int i=0; i<searchItems.size();i++) {
-				ExtendedItem extendedItem = new ExtendedItem();
-				extendedItem.setItem(searchItems.get(i));
-				association.put(vendorOfItems.get(i), priceOfItems.get(i));
-				extendedItem.setValue(association);
-				finalItemsSearch.add(extendedItem);
-			}
+			finalItemSearch = extendedItemDAO.findAllItemDetails(searchItems);
+			
 			
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to find items");
@@ -102,7 +90,8 @@ public class doSearch extends HttpServlet {
 		String path = "search";
 		ServletContext servletContext = getServletContext();
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("searchItem", finalItemsSearch);
+		webContext.setVariable("searchItem", finalItemSearch);
+		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 

@@ -5,18 +5,18 @@
 <title>Search page</title>
 </head>
 <body>
-	<table>
+	<div th:replace="~{partials/header :: nav}"></div>
+	<h2>Your search returned [[${searchItem.size()}]] results</h2>
+	<table th:if="${searchItem.size()>0}">
 		<tr>
 			<th>Code</th>
 			<th>Name</th>
 			<th>Price</th>
 		</tr>
 		<tr th:each="item : ${searchItem}">
-			<td th:text="${item.item.id}">Id</td>
-			<td th:text="${item.item.name}">Name</td>
-			<td th:each="vendor : ${item.value.keySet()}">
-				<p th:text="${item.value.get(vendor).price}">Price</p>
-			</td>
+			<td th:text="${item.id}">Id</td>
+			<td th:text="${item.name}">Name</td>
+			<td th:text="${item.value.values.iterator().next().price}">Price</td>
 		</tr>
 	</table>
 </body>

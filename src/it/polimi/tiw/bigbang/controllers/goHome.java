@@ -47,7 +47,7 @@ public class goHome extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 
 		ItemDAO itemDAO = new ItemDAO(connection);
-		ArrayList<Item> items = null;
+		List<Item> items = new ArrayList<>();
 		try {
 			items = itemDAO.findLastViewedItemsByUser(user.getId());
 		} catch (SQLException e) {
@@ -55,7 +55,7 @@ public class goHome extends HttpServlet {
 		}
 
 		if (items.isEmpty() || items.size() < 5) {
-			ArrayList<Item> fillerItems = null;
+			List<Item> fillerItems = new ArrayList<>();
 
 			try {
 				fillerItems = itemDAO.findNItemsByCategory("Books", 5);
