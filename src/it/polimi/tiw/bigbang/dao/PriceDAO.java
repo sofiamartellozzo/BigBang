@@ -5,6 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+
+import java.util.List;
 
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
@@ -67,6 +72,43 @@ public ArrayList<Price> findLowerPriceByItemId(ArrayList<Integer> items) throws 
 }
 return prices;
 }
+
+
+public Map<Integer, List<Price>> findManyByItemIDs(List<Integer> itemIDs) throws SQLException {
+	  String query = "SELECT id_item, id_vendor, price FROM price WHERE id_item = ?";
+	  Map<Integer, List<Price>> itemIDPriceListMap = new HashMap<>();
+	  
+	  for (int itemID : itemIDs) {
+	   List<Price> currentItemPrices = new ArrayList<>();
+	   try (PreparedStatement pstatement = con.prepareStatement(query)) {
+	    pstatement.setInt(1, itemID);
+	    try (ResultSet result = pstatement.executeQuery()) {
+	     if (result.isBeforeFirst()) {
+	      while (result.next()) {
+	       Price price = new Price();
+	       price.setIdItem(result.getInt("id_item"));
+	       price.setIdVendor(result.getInt("id_vendor"));
+	       price.setPrice(result.getInt("price"));
+	       currentItemPrices.add(price);
+	      }
+	     }
+	    }
+	   }
+	   
+	   
+	   
+	   Comparator<Price> comparePrice = new Comparator<Price>() {
+	    @Override
+	    public int compare(Price o1, Price o2) {
+	     return (int)(o1.getPrice() - o2.getPrice());
+	    }
+	   };
+	   currentItemPrices.sort(comparePrice);
+	   itemIDPriceListMap.put(itemID, currentItemPrices);
+	  }
+	  
+	  return itemIDPriceListMap;
+	 }
 }
 
 

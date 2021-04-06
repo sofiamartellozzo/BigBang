@@ -15,13 +15,13 @@ import it.polimi.tiw.bigbang.beans.Vendor;
 
 public class ExtendedItemDAO {
 	private Connection connection;
-	
+
 	public ExtendedItemDAO(Connection connection) {
 		this.connection = connection;
 	}
-	
+
 	public List<ExtendedItem> findAllItemDetails(List<Item> items) {
-		
+
 		List<ExtendedItem> extendedItems = new ArrayList<>();
 		// extract a list of the IDs of the items
 		Map<Integer, Item> itemIdItemMap = new HashMap<>();
@@ -55,7 +55,7 @@ public class ExtendedItemDAO {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			
+
 			ExtendedItem extendedItem = new ExtendedItem();
 			extendedItem.setItem(itemIdItemMap.get(itemID));
 			extendedItem.setValue(new LinkedHashMap<>());
@@ -64,7 +64,7 @@ public class ExtendedItemDAO {
 			}
 			extendedItems.add(extendedItem);
 		}
-		
+
 		return extendedItems;
 	}
 }
