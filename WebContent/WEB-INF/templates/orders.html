@@ -7,13 +7,16 @@
   <body>
     <div th:replace="~{partials/header :: nav}"></div>
     <h1>Orders</h1>
-	<div th:each="order : ${orders}">
+	<div th:each="entry : ${orders}" th:with="orderInfo=${entry.key},orderItems=${entry.value},vendorInfo=${vendorDetails.get(orderInfo.id_vendor)}">
 		<hr>
-		<strong>ORDER ID: [[${order.id}]]</strong><br>
-		<strong>at [[${order.date}]]</strong>
-		<div th:each="entry : ${order.items}" th:with="item=${entry.key},quantity=${entry.value}">
-			<p>[[${quantity}]]x [[${item.name}]]</p>
+		<p><strong>[[${vendorInfo.name}]]([[${vendorInfo.score}]]/5)</strong> at [[${orderInfo.date}]]</p>
+		<p>id: [[${orderInfo.id}]]</p>
+		<div th:each="orderedItem : ${orderItems}" th:with="itemInfo=${itemDetails.get(orderedItem.id_item)}">
+			<p>[[${orderedItem.quantity}]]x [[${itemInfo.name}]]: [[${orderedItem.cost*orderedItem.quantity}]]&euro;</p>
 		</div>
+		<p>Subtotal: [[${orderInfo.total_items_cost}]]&euro;</p>
+		<p>Shipping: [[${orderInfo.shipping_cost}]]&euro;</p>
+		<strong>Total: [[${orderInfo.getOrderTotal()}]]&euro;</strong>
     </div>
     <hr>
   </body>

@@ -18,7 +18,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.Item;
-import it.polimi.tiw.bigbang.beans.Order;
+import it.polimi.tiw.bigbang.beans.OrderedItem;
 import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.ShippingRange;
