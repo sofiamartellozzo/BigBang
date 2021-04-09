@@ -1,34 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="ISO-8859-1" />
-<title>Home page</title>
-</head>
-<body>
-	<div th:replace="~{partials/header :: nav}"></div>
-	<h1>Last viewed</h1>
-	<table>
-		<tr th:each="item : ${lastViewedItems}">
-			<td>
-				<h3>[[${item.name}]]</h3>
-				<p>[[${item.description}]]</p>
-			</td>
-			<td th:each="entry : ${item.value}"
-				th:with="vendor=${entry.key},price=${entry.value}">
-				<p>
-					<strong>[[${price.price}]]&euro;</strong> by
-					[[${vendor.name}]]([[${vendor.score}]]/5)
-				</p>
-				<p>free shipping after [[${vendor.free_limit}]]&euro;! otherwise,</p>
-				<div th:each="range : ${vendor.ranges}">
-					<p>from [[${range.min}]] to [[${range.max}]] items: [[${range.cost}]]&euro;</p>
-				</div>
-				<form th:action="@{/doAddCart}" method="post">
-				<input type="number" name="quantity" value="1">
-				<button>add to cart</button>
-				</form>
-			</td>
-		</tr>
-	</table>
-</body>
+  <head th:replace="partials/head :: common_head('home')"></head>
+  <body>
+    <div th:replace="~{partials/header :: header}"></div>
+    <h1>Last viewed</h1>
+    <table>
+      <tr th:each="item : ${lastViewedItems}">
+        <td>
+          <h3>[[${item.name}]]</h3>
+          <p>[[${item.description}]]</p>
+        </td>
+        <td
+          th:each="entry : ${item.value}"
+          th:with="vendor=${entry.key},price=${entry.value}"
+        >
+          <p>
+            <strong>[[${price.price}]]&euro;</strong> by
+            [[${vendor.name}]]([[${vendor.score}]]/5)
+          </p>
+          <p>free shipping after [[${vendor.free_limit}]]&euro;! otherwise,</p>
+          <div th:each="range : ${vendor.ranges}">
+            <p>
+              from [[${range.min}]] to [[${range.max}]] items:
+              [[${range.cost}]]&euro;
+            </p>
+          </div>
+          <form th:action="@{/doAddCart}" method="post">
+            <input type="number" name="quantity" value="1" />
+            <button>add to cart</button>
+          </form>
+        </td>
+      </tr>
+    </table>
+  </body>
 </html>

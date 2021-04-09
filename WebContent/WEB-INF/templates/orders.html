@@ -1,23 +1,32 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
-    <meta charset="ISO-8859-1" />
-    <title>Orders</title>
-  </head>
+  <head th:replace="partials/head :: common_head('orders')"></head>
   <body>
-    <div th:replace="~{partials/header :: nav}"></div>
+    <div th:replace="~{partials/header :: header}"></div>
     <h1>Orders</h1>
-	<div th:each="entry : ${orders}" th:with="orderInfo=${entry.key},orderItems=${entry.value},vendorInfo=${vendorDetails.get(orderInfo.id_vendor)}">
-		<hr>
-		<p><strong>[[${vendorInfo.name}]]([[${vendorInfo.score}]]/5)</strong> at [[${orderInfo.date}]]</p>
-		<p>id: [[${orderInfo.id}]]</p>
-		<div th:each="orderedItem : ${orderItems}" th:with="itemInfo=${itemDetails.get(orderedItem.id_item)}">
-			<p>[[${orderedItem.quantity}]]x [[${itemInfo.name}]]: [[${orderedItem.cost*orderedItem.quantity}]]&euro;</p>
-		</div>
-		<p>Subtotal: [[${orderInfo.total_items_cost}]]&euro;</p>
-		<p>Shipping: [[${orderInfo.shipping_cost}]]&euro;</p>
-		<strong>Total: [[${orderInfo.getOrderTotal()}]]&euro;</strong>
+    <div
+      th:each="entry : ${orders}"
+      th:with="orderInfo=${entry.key},orderItems=${entry.value},vendorInfo=${vendorDetails.get(orderInfo.id_vendor)}"
+    >
+      <hr />
+      <p>
+        <strong>[[${vendorInfo.name}]]([[${vendorInfo.score}]]/5)</strong> at
+        [[${orderInfo.date}]]
+      </p>
+      <p>id: [[${orderInfo.id}]]</p>
+      <div
+        th:each="orderedItem : ${orderItems}"
+        th:with="itemInfo=${itemDetails.get(orderedItem.id_item)}"
+      >
+        <p>
+          [[${orderedItem.quantity}]]x [[${itemInfo.name}]]:
+          [[${orderedItem.cost*orderedItem.quantity}]]&euro;
+        </p>
+      </div>
+      <p>Subtotal: [[${orderInfo.total_items_cost}]]&euro;</p>
+      <p>Shipping: [[${orderInfo.shipping_cost}]]&euro;</p>
+      <strong>Total: [[${orderInfo.getOrderTotal()}]]&euro;</strong>
     </div>
-    <hr>
+    <hr />
   </body>
 </html>
