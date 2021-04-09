@@ -66,7 +66,12 @@ public class goCart extends HttpServlet {
 				numberOfItems = numberOfItems + s.getQuantity();
 			}
 
-			if (numberOfItems >= v.getFree_limit()) {
+			float total = 0;
+			for (SelectedItem s : cart.get(v)) {
+				total = total + (s.getCost() * s.getQuantity());
+			}
+
+			if (total >= v.getFree_limit()) {
 				shippingPrice = 0;
 			} else {
 				for (ShippingRange s : v.getRanges()) {
@@ -74,10 +79,7 @@ public class goCart extends HttpServlet {
 						shippingPrice = s.getCost();
 					}
 				}
-			}
-			float total = shippingPrice;
-			for (SelectedItem s : cart.get(v)) {
-				total = total + (s.getCost() * s.getQuantity());
+				total=total+shippingPrice;
 			}
 
 			float[] costs = new float[2];
