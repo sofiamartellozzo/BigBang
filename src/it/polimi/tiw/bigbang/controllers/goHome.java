@@ -5,9 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -89,5 +87,13 @@ public class goHome extends HttpServlet {
 		webContext.setVariable("lastViewedItems", extendedItems);
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
+	}
+	
+	public void destroy() {
+		try {
+			DBConnectionProvider.closeConnection(connection);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

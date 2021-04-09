@@ -11,7 +11,6 @@ import java.util.Map;
 
 import java.util.List;
 
-import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
 
 public class PriceDAO {

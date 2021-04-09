@@ -18,13 +18,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.Item;
-import it.polimi.tiw.bigbang.beans.OrderedItem;
-import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.ShippingRange;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
-import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.UserDAO;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -47,7 +44,6 @@ public class doLogin extends HttpServlet {
 		templateEngine.process(path, ctx, response.getWriter());
 	}
 
-	@SuppressWarnings("serial")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		// obtain and escape params

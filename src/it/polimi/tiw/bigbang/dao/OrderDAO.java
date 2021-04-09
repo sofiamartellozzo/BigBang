@@ -54,28 +54,4 @@ public class OrderDAO {
 		
 		return userOrders;
 	}
-	
-//	public List<OrderedItem> findOrdersByUserID(int userID) throws SQLException {
-//		String query = "SELECT * FROM `order` WHERE id_user = ? ORDER BY date AND id";
-//		List<OrderedItem> userOrders = new ArrayList<>();
-//		
-//		try (PreparedStatement pstatement = connection.prepareStatement(query)) {
-//			pstatement.setInt(1, userID);
-//			try (ResultSet result = pstatement.executeQuery()) {
-//				if (result.isBeforeFirst()) {
-//					while (result.next()) {
-//						OrderedItem order = new OrderedItem();
-//						order.setId(result.getString("id"));
-//						order.setId_user(result.getInt("id_user"));
-//						order.setId_item(result.getInt("id_item"));
-//						order.setDate(result.getTimestamp("date"));
-//						order.setQuantity(result.getInt("quantity"));
-//						userOrders.add(order);
-//					}
-//				}
-//			}
-//		}
-//		
-//		return userOrders;
-//	}
 }

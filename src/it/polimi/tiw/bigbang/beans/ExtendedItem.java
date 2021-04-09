@@ -1,6 +1,5 @@
 package it.polimi.tiw.bigbang.beans;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -29,7 +28,7 @@ public class ExtendedItem {
 	public void setItem(Item item) {
 		this.item = item;
 	}
-	public HashMap<Vendor, Price> getValue() {
+	public Map<Vendor, Price> getValue() {
 		return value;
 	}
 	public void setValue(LinkedHashMap<Vendor, Price> value) {
