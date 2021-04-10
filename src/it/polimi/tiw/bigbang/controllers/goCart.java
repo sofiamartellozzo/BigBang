@@ -3,7 +3,6 @@ package it.polimi.tiw.bigbang.controllers;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,13 +16,10 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.ShippingRange;
-import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
-import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -32,10 +28,6 @@ public class goCart extends HttpServlet {
 	private ServletContext servletContext;
 	private Connection connection;
 	private TemplateEngine templateEngine;
-
-	public goCart() {
-		super();
-	}
 
 	public void init() throws ServletException {
 		servletContext = getServletContext();
@@ -74,7 +66,12 @@ public class goCart extends HttpServlet {
 				numberOfItems = numberOfItems + s.getQuantity();
 			}
 
-			if (numberOfItems >= v.getFree_limit()) {
+			float total = 0;
+			for (SelectedItem s : cart.get(v)) {
+				total = total + (s.getCost() * s.getQuantity());
+			}
+
+			if (total >= v.getFree_limit()) {
 				shippingPrice = 0;
 			} else {
 				for (ShippingRange s : v.getRanges()) {
@@ -82,11 +79,7 @@ public class goCart extends HttpServlet {
 						shippingPrice = s.getCost();
 					}
 				}
-			}
-			System.out.println(shippingPrice);
-			float total = shippingPrice;
-			for (SelectedItem s : cart.get(v)) {
-				total = total + (s.getCost() * s.getQuantity());
+				total=total+shippingPrice;
 			}
 
 			float[] costs = new float[2];
@@ -102,11 +95,6 @@ public class goCart extends HttpServlet {
 		webContext.setVariable("shipping", shipping);
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
-	}
-
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
 	}
 
 	public void destroy() {

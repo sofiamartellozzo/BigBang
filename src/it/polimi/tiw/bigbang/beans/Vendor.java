@@ -1,6 +1,5 @@
 package it.polimi.tiw.bigbang.beans;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Vendor {

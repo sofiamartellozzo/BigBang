@@ -51,7 +51,7 @@ public class ExtendedItemDAO {
 			List<Vendor> itemVendors = new ArrayList<>();
 			VendorDAO vendorDAO = new VendorDAO(connection);
 			try {
-				itemVendors = vendorDAO.findById(itemVendorIDs);
+				itemVendors = vendorDAO.findFullById(itemVendorIDs);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}

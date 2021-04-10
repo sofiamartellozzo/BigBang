@@ -1,24 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-<meta charset="UTF-8">
-<title>Search page</title>
-</head>
-<body>
-	<div th:replace="~{partials/header :: nav}"></div>
-	<h2>Your search returned [[${searchItem.size()}]] results</h2>
-	<table th:if="${searchItem.size()>0}">
-		<tr>
-			<th>Code</th>
-			<th>Name</th>
-			<th>Price</th>
-		</tr>
-		<tr th:each="item : ${searchItem}">
-			<td th:text="${item.id}">Id</td>
-			<td th:text="${item.name}">Name</td>
-			<td th:text="${item.value.values.iterator().next().price}">Price</td>
-		</tr>
-	</table>
-	<a href= #top>--->Roll up to the top</a>
-</body>
+  <head th:replace="partials/head :: common_head('search')"></head>
+  <body>
+    <div th:replace="~{partials/header :: header}"></div>
+    <h2>Your search returned [[${searchItem.size()}]] results</h2>
+    <table th:if="${searchItem.size()>0}">
+      <tr>
+        <th>Code</th>
+        <th>Name</th>
+        <th>Price</th>
+      </tr>
+      <tr th:each="item : ${searchItem}">
+        <td th:text="${item.id}">Id</td>
+        <td th:text="${item.name}">Name</td>
+        <td th:text="${item.value.values.iterator().next().price}">Price</td>
+      </tr>
+    </table>
+    <a href= #top>--->Roll up to the top</a>
+  </body>
 </html>
+

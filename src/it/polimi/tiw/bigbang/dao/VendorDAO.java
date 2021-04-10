@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.ShippingRange;
 import it.polimi.tiw.bigbang.beans.Vendor;
 
@@ -17,8 +16,29 @@ public class VendorDAO {
 	public VendorDAO(Connection connection) {
 		this.con = connection;
 	}
-
+	
 	public List<Vendor> findById(List<Integer> vendorIDs) throws SQLException {
+		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
+		List<Vendor> vendors = new ArrayList<Vendor>();
+		for (Integer id : vendorIDs) {
+			PreparedStatement pStatementVendors = con.prepareStatement(vendorsQuery);
+			pStatementVendors.setInt(1, id);
+			ResultSet resultVendors = pStatementVendors.executeQuery(); 
+			if (resultVendors.isBeforeFirst()) {
+				resultVendors.next();
+				Vendor v = new Vendor();
+				v.setId(resultVendors.getInt("id"));
+				v.setName(resultVendors.getString("name"));
+				v.setScore(resultVendors.getInt("score"));
+				v.setFree_limit(resultVendors.getInt("free_limit"));
+				
+				vendors.add(v);
+			}
+		}
+		return vendors;
+	}
+
+	public List<Vendor> findFullById(List<Integer> vendorIDs) throws SQLException {
 		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
 		String shippingRangeQuery = "SELECT R.* FROM `range` R, shipping_policy SP WHERE R.id = SP.id_range AND SP.id_vendor = ?";
 		List<Vendor> vendors = new ArrayList<Vendor>();

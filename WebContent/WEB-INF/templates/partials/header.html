@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+  <!-- <head>
+    <link rel="stylesheet" href="../../../css/main.css" />
+  </head> -->
   <body>
-    <nav>
-    	<p>Welcome, <span th:text="${user.name+' '+user.surname}">Full Name</span></p>
-    	<p th:text="${user.address}">Address</p>
-    	<a th:href="@{/home}">home</a>
-    	<a th:href="@{/cart}">cart</a>
-    	<a th:href="@{/orders}">orders</a>
-    	<form th:action="@{/search}" method="GET">
-    		<input type="text" name="keyword" placeholder="search...">
-    	</form>
-    	<a th:href="@{/logout}">logout :(</a>
-    </nav>
+    <header>
+      <h1>BigBang</h1>
+      <nav>
+        <ul class="nav-links">
+          <li>
+            <a href="#" th:href="@{/home}">Home</a>
+          </li>
+          <li>
+            <a href="#" th:href="@{/cart}">Cart</a>
+          </li>
+          <li>
+            <a href="#" th:href="@{/orders}">Orders</a>
+          </li>
+          <li>
+            <form action="#" th:action="@{/search}" method="GET">
+              <input type="text" name="keyword" placeholder="search..." />
+            </form>
+          </li>
+        </ul>
+      </nav>
+      <div>
+        <span th:text="|${user.name} ${user.surname}|">John Doe</span>
+        <a href="#" th:href="@{/logout}"><button>Logout</button></a>
+      </div>
+    </header>
   </body>
 </html>

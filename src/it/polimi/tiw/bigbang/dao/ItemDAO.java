@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.tiw.bigbang.beans.Item;
-import it.polimi.tiw.bigbang.beans.Price;
 
 public class ItemDAO {
 	private Connection con;
