@@ -68,7 +68,7 @@
       </tr>
       <tr>
         <td colspan="5" align="right">
-          <form th:action="@{/doOrder?vendorId=}" method="POST">
+          <form th:action="@{|/doOrder?vendorId=${vendor.id}|}" method="POST">
             <button type="submit">Order</button>
           </form>
         </td>
