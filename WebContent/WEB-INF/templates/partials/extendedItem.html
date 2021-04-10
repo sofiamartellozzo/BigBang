@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<body>
+		
+			<div th:each="item: ${itemViewed}">
+				<p>[[${item.id}]]</p>
+				<p>[[${item.name}]]</p>
+				<p>[[${item.description}]]</p>
+				<div th:each="entry : ${item.value}"
+          			th:with="vendor=${entry.key},price=${entry.value}">
+					<p>[[${vendor.name}]]([[${vendor.score}]]/5)</p>
+					<p>[[${price.price}]]&euro;</p>
+					<p>free shipping after [[${vendor.free_limit}]]&euro;!</p>
+					<form th:action="@{/doAddCart}" method="post">
+            			<input type="number" name="quantity" value="1" />
+            			<button>add to cart</button>
+          			</form>
+				</div>
+			</div>
+
+	</body>
+</html>

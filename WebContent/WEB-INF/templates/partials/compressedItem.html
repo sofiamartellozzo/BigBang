@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<body>
+			<div th:each="item: ${searchItem}">
+				<p>[[${item.id}]]</p>
+				<p>[[${item.name}]]</p>
+				<p>[[${item.value.values.iterator().next().price}]]</p>
+					<form th:action="@{/doView?viewId=}" method="POST">
+						<button type="submit">view</button>
+					</form>
+			</div>
+		
+	</body>
+</html>

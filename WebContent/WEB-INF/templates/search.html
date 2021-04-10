@@ -4,18 +4,21 @@
   <body>
     <div th:replace="~{partials/header :: header}"></div>
     <h2>Your search returned [[${searchItem.size()}]] results</h2>
-    <table th:if="${searchItem.size()>0}">
-      <tr>
-        <th>Code</th>
-        <th>Name</th>
-        <th>Price</th>
-      </tr>
-      <tr th:each="item : ${searchItem}">
-        <td th:text="${item.id}">Id</td>
-        <td th:text="${item.name}">Name</td>
-        <td th:text="${item.value.values.iterator().next().price}">Price</td>
-      </tr>
-    </table>
+    <div th:if="${searchItem.size()>0}">
+      <div>
+        <h3>Code</h3>
+        <h3>Name</h3>
+        <h3>Price</h3>
+      </div>
+      <div th:each="item : ${searchItem}">
+      	<div th:if="${itemViewed.contains(item)}">
+        	<p th:replace="~{partials/extendedItem :: extendeditem}"></p>
+        </div>
+        <div th:unless="${itemViewed.contains(item)}">
+       		<p th:replace="~{partials/compressedItem :: compresseditem}" ></p>
+        </div>
+      </div>
+    </div>
     <a href= #top>--->Roll up to the top</a>
   </body>
 </html>

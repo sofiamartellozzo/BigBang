@@ -41,6 +41,10 @@ public class doSearch extends HttpServlet {
 		
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
+		
+		//each time I do a search, remove all old items searched and visualized
+		request.getSession().removeAttribute("itemSearch");
+		request.getSession().removeAttribute("itemViewed");
 
 		// Get the search parameter, so the items asked
 		String itemSearch = null;
@@ -61,6 +65,9 @@ public class doSearch extends HttpServlet {
 		try {
 			searchItems = itemDAO.findItemsByWord(itemSearch);
 			finalItemSearch = extendedItemDAO.findAllItemDetails(searchItems);
+			
+			//put the serch items in the session, so they now can be find by doView when redirect to serch page
+			request.getSession().setAttribute("itemSearch", finalItemSearch);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to find items");
 			e.printStackTrace();
@@ -76,22 +83,7 @@ public class doSearch extends HttpServlet {
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 	
-	/*
-	public void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException{
-		HttpSession session = request.getSession();
-		
-		//get the id of the item of wich the user ask the visualization
-		Integer idItemAsked = null;
-		try {
-			idItemAsked = Integer.parseInt(request.getParameter("missionid"));
-		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Problem in finding idItem to visualized!");
-			return;
-		}
 
-		
-	}*/
 
 	public void destroy() {
 		try {
