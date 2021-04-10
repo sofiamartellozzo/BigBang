@@ -21,6 +21,7 @@ import it.polimi.tiw.bigbang.beans.ShippingRange;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
+import it.polimi.tiw.bigbang.utils.OrderUtils;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 public class goCart extends HttpServlet {
@@ -59,27 +60,10 @@ public class goCart extends HttpServlet {
 
 		for (Vendor v : cart.keySet()) {
 
-			float shippingPrice = 0;
-
-			int numberOfItems = 0;
-			for (SelectedItem s : cart.get(v)) {
-				numberOfItems = numberOfItems + s.getQuantity();
-			}
-
+			float shippingPrice = OrderUtils.calculateShipping(v, cart.get(v));
 			float total = 0;
 			for (SelectedItem s : cart.get(v)) {
 				total = total + (s.getCost() * s.getQuantity());
-			}
-
-			if (total >= v.getFree_limit()) {
-				shippingPrice = 0;
-			} else {
-				for (ShippingRange s : v.getRanges()) {
-					if ((s.getMin() <= numberOfItems) && (s.getMax() >= numberOfItems)) {
-						shippingPrice = s.getCost();
-					}
-				}
-				total=total+shippingPrice;
 			}
 
 			float[] costs = new float[2];
