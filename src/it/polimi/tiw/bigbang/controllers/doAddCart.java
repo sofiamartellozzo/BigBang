@@ -29,7 +29,7 @@ public class doAddCart extends HttpServlet {
 	private Connection connection;
 
 	public void init() throws ServletException {
-		
+
 		ServletContext servletContext = getServletContext();
 		connection = DBConnectionProvider.getConnection(servletContext);
 
@@ -48,8 +48,7 @@ public class doAddCart extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 
 		// Get items added to cart
-		HashMap<Vendor, List<SelectedItem>> cart = new HashMap<Vendor, List<SelectedItem>>(); // items added to cart
-																								// from session
+		HashMap<Vendor, List<SelectedItem>> cart = new HashMap<Vendor, List<SelectedItem>>();
 
 		try {
 			cart = (HashMap<Vendor, List<SelectedItem>>) session.getAttribute("cart");
@@ -64,6 +63,7 @@ public class doAddCart extends HttpServlet {
 		Integer quantity = 1;
 		boolean decrement = false;
 
+		// Read variables from request
 		try {
 			vendorAdd = Integer.parseInt(request.getParameter("vendorId"));
 			if (vendorAdd == null) {
@@ -75,12 +75,12 @@ public class doAddCart extends HttpServlet {
 				throw new Exception("Missing or empty credential value item");
 			}
 
-			// from search or home
+			// Set if item is added from search or home pages
 			if (request.getParameter("quantity") != null) {
 				quantity = Integer.parseInt(request.getParameter("quantity"));
 			}
 
-			// from cart if decrement
+			// Set if user wish decrement the number of items added to cart
 			if (request.getParameter("sub") != null) {
 				decrement = true;
 			}
@@ -90,47 +90,22 @@ public class doAddCart extends HttpServlet {
 			return;
 		}
 
-		// catch information about vendor
-		ItemDAO itemDAO = new ItemDAO(connection);
-		Item item = new Item();
-		try {
-			item = itemDAO.findItemsBySingleId(itemAdd);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		// catch price
-		PriceDAO priceDAO = new PriceDAO(connection);
-		Price price = new Price();
-		try {
-			price = priceDAO.findPriceBySingleItemId(itemAdd,vendorAdd);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-		// catch information about item
-		VendorDAO vendorDAO = new VendorDAO(connection);
-		Vendor vendor = new Vendor();
-		try {
-			vendor = vendorDAO.findFullBySingleId(vendorAdd);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
+		// Search if vendor is present yet
 		boolean vendorIsPresent = false;
 		Vendor selectedVendor = null;
-		for (Vendor v : cart.keySet()) { // search item
-			if (v.getId()==vendorAdd) {
+		for (Vendor v : cart.keySet()) {
+			if (v.getId() == vendorAdd) {
 				vendorIsPresent = true;
 				selectedVendor = v;
 			}
 		}
-			
-		if (vendorIsPresent) { // search vendor
 
+		if (vendorIsPresent) {
+
+			// Search if vendor is already present 
 			boolean isPresent = false;
 			SelectedItem selectedItem = null;
-			for (SelectedItem s : cart.get(selectedVendor)) { // search item
+			for (SelectedItem s : cart.get(selectedVendor)) {
 				if (s.getItem().getId() == itemAdd) {
 					isPresent = true;
 					selectedItem = s;
@@ -138,17 +113,37 @@ public class doAddCart extends HttpServlet {
 			}
 
 			if (!isPresent) { // if not present create it
+
+				// Collect information about item
+				ItemDAO itemDAO = new ItemDAO(connection);
+				Item item = new Item();
+				try {
+					item = itemDAO.findItemsBySingleId(itemAdd);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
+				// Collect information about the price of the specific item
+				PriceDAO priceDAO = new PriceDAO(connection);
+				Price price = new Price();
+				try {
+					price = priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd);
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+
 				selectedItem = new SelectedItem();
 				selectedItem.setItem(item);
 				selectedItem.setQuantity(quantity);
 				selectedItem.setCost(price.getPrice());
 				cart.get(selectedVendor).add(selectedItem);
-			} else { // if present yet
+
+			} else { //item is already present 
 				int actualQuantity = selectedItem.getQuantity();
 				if (decrement) {
-					if (selectedItem.getQuantity() < 2) { // quantity == 0
+					if (selectedItem.getQuantity() < 2) { // quantity == 1
 						cart.get(selectedVendor).remove(selectedItem);
-						if(cart.get(selectedVendor).isEmpty()) {
+						if (cart.get(selectedVendor).isEmpty()) {
 							cart.remove(selectedVendor);
 						}
 					} else { // simply decrement quantity
@@ -161,9 +156,36 @@ public class doAddCart extends HttpServlet {
 				}
 			}
 		}
-		
-		else { //vendor is not present
-			
+
+		else { // vendor is not present
+
+			// Collect information about item
+			ItemDAO itemDAO = new ItemDAO(connection);
+			Item item = new Item();
+			try {
+				item = itemDAO.findItemsBySingleId(itemAdd);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			// Collect information about the price of the specific item
+			PriceDAO priceDAO = new PriceDAO(connection);
+			Price price = new Price();
+			try {
+				price = priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
+			// Collect information about vendor
+			VendorDAO vendorDAO = new VendorDAO(connection);
+			Vendor vendor = new Vendor();
+			try {
+				vendor = vendorDAO.findFullBySingleId(vendorAdd);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+
 			SelectedItem selectedItem = new SelectedItem();
 			selectedItem.setItem(item);
 			selectedItem.setQuantity(quantity);
@@ -172,10 +194,9 @@ public class doAddCart extends HttpServlet {
 			ls.add(selectedItem);
 			cart.put(selectedVendor, ls);
 		}
-		
+
 		request.getSession().setAttribute("cart", cart);
 		response.sendRedirect(getServletContext().getContextPath() + "/cart");
-		
 
 	}
 }
