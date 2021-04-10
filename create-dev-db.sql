@@ -137,13 +137,13 @@ CREATE TABLE IF NOT EXISTS `vendor` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(45) NOT NULL,
   `score` INT NOT NULL,
-  `free_limit` INT NULL DEFAULT NULL,
+  `free_limit` FLOAT NULL DEFAULT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-INSERT INTO `vendor` (`id`,`name`,`score`,`free_limit`) VALUES (1,'SAMcommerce',5,7);
-INSERT INTO `vendor` (`id`,`name`,`score`,`free_limit`) VALUES (2,'Mondadori',4,4);
-INSERT INTO `vendor` (`id`,`name`,`score`,`free_limit`) VALUES (3,'Mercatino',3.5,5);
+INSERT INTO `vendor` (`id`,`name`,`score`,`free_limit`) VALUES (1,'SAMcommerce',5,24.99);
+INSERT INTO `vendor` (`id`,`name`,`score`,`free_limit`) VALUES (2,'Mondadori',4,9.99);
+INSERT INTO `vendor` (`id`,`name`,`score`,`free_limit`) VALUES (3,'Mercatino',3.5,49.99);
 
 -- -----------------------------------------------------
 -- Table `shipping_policy`
