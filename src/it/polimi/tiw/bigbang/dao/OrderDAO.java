@@ -4,13 +4,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import it.polimi.tiw.bigbang.beans.OrderInfo;
 import it.polimi.tiw.bigbang.beans.OrderedItem;
+import it.polimi.tiw.bigbang.beans.SelectedItem;
 
 public class OrderDAO {
 	private Connection connection;
@@ -53,5 +57,39 @@ public class OrderDAO {
 		}
 		
 		return userOrders;
+	}
+	
+	public void createNewOrder(int userID, int vendorID, float shipping_cost, List<SelectedItem> items) {
+		String orderInfoQuery = "INSERT INTO order_info (`id`,`id_user`,`id_vendor`,`date`,`shipping_cost`) VALUES (?,?,?,?,?)";
+		String orderedItemQuery = "INSERT INTO ordered_item (`id_order`,`id_item`,`quantity`,`cost`) VALUES (?,?,?,?)";
+		
+		String uuid = UUID.randomUUID().toString();
+		
+		try (PreparedStatement psInfo = connection.prepareStatement(orderInfoQuery)) {
+			psInfo.setString(1, uuid);
+			psInfo.setInt(2, userID);
+			psInfo.setInt(3, vendorID);
+			psInfo.setTimestamp(4, new Timestamp(Calendar.getInstance().getTime().getTime()));
+			psInfo.setFloat(5, shipping_cost);
+			
+			psInfo.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		try (PreparedStatement psItem = connection.prepareStatement(orderedItemQuery)) {
+			for (SelectedItem item : items) {
+				psItem.setString(1, uuid);
+				psItem.setInt(2, item.getItem().getId());
+				psItem.setInt(3, item.getQuantity());
+				psItem.setFloat(4, item.getCost());
+				
+				psItem.executeUpdate();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
 	}
 }
