@@ -94,6 +94,23 @@ public class doSearch extends HttpServlet {
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
+	
+	/*
+	public void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException{
+		HttpSession session = request.getSession();
+		
+		//get the id of the item of wich the user ask the visualization
+		Integer idItemAsked = null;
+		try {
+			idItemAsked = Integer.parseInt(request.getParameter("missionid"));
+		} catch (Exception e) {
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Problem in finding idItem to visualized!");
+			return;
+		}
+
+		
+	}*/
 
 	public void destroy() {
 		try {
