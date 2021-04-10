@@ -25,13 +25,13 @@
       <tr th:each="entry : ${itemselected}">
         <td th:text="${entry.item.name}"></td>
         <td align="center">
-          <form th:action="@{/doAddCart?vendorId=}" method="POST">
+          <form th:action="@{|/doAddCart?vendorId=${vendor.id}&itemId=${entry.item.id}|}" method="POST">
             <button type="submit">-</button>
           </form>
         </td>
         <td align="center" th:text="${entry.quantity}"></td>
         <td align="center">
-          <form th:action="@{/doAddCart?vendorId=}" method="POST">
+          <form th:action="@{|/doAddCart?vendorId=${vendor.id}&itemId=${entry.item.id}&sub=true|}" method="POST">
             <button type="submit">+</button>
           </form>
         </td>
@@ -68,7 +68,7 @@
       </tr>
       <tr>
         <td colspan="5" align="right">
-          <form th:action="@{/doOrder?vendorId=}" method="POST">
+          <form th:action="@{|/doOrder?vendorId=${vendor.id}|}" method="POST">
             <button type="submit">Order</button>
           </form>
         </td>
