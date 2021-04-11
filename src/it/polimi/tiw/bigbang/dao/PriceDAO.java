@@ -34,7 +34,7 @@ public class PriceDAO {
 					Price price = new Price();
 					price.setIdItem(result.getInt("id_item"));
 					price.setIdVendor(result.getInt("id_vendor"));
-					price.setPrice(result.getInt("price"));
+					price.setPrice(result.getFloat("price"));
 					prices.add(price);
 				}
 
@@ -42,6 +42,27 @@ public class PriceDAO {
 		}
 	}
 	return prices;
+	}
+	
+	public Price findPriceBySingleItemId(int item, int vendor) throws SQLException{
+		String query = "SELECT id_item, id_vendor, price FROM price WHERE id_item = ? AND id_vendor = ?";
+		
+			try (PreparedStatement pstatement = con.prepareStatement(query);) {
+				pstatement.setInt(1, item);
+				pstatement.setInt(2, vendor);
+				try (ResultSet result = pstatement.executeQuery();) {
+					if (!result.isBeforeFirst())
+						return null;
+				else {
+					result.next();
+					Price price = new Price();
+					price.setIdItem(result.getInt("id_item"));
+					price.setIdVendor(result.getInt("id_vendor"));
+					price.setPrice(result.getFloat("price"));
+					return price;
+				}
+			}
+		}
 	}
 
 
@@ -62,7 +83,7 @@ public ArrayList<Price> findLowerPriceByItemId(ArrayList<Integer> items) throws 
 				Price price = new Price();
 				price.setIdItem(result.getInt("id_item"));
 				price.setIdVendor(result.getInt("id_vendor"));
-				price.setPrice(result.getInt("price"));
+				price.setPrice(result.getFloat("price"));
 				prices.add(price);
 			}
 
@@ -71,6 +92,7 @@ public ArrayList<Price> findLowerPriceByItemId(ArrayList<Integer> items) throws 
 }
 return prices;
 }
+
 
 
 public Map<Integer, List<Price>> findManyByItemIDs(List<Integer> itemIDs) throws SQLException {
