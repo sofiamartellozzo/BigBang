@@ -27,26 +27,35 @@ import it.polimi.tiw.bigbang.dao.ViewDAO;
 
 public class doView extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	private ServletContext servletContext;
     private Connection connection;
     private TemplateEngine templateEngine;
     
     public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
+		servletContext = getServletContext();
 		connection = DBConnectionProvider.getConnection(servletContext);
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
     
-	
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+    	String path = "search";
+		ServletContext servletContext = getServletContext();
+		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		templateEngine.process(path, webContext, response.getWriter());
+    }
+    
+    @SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		HttpSession session = request.getSession();
+		System.out.println("I arrived here");
+    	HttpSession session = request.getSession();
 		
 		//get the id of the item of wich the user ask the visualization
 		Integer idItemAsked = null;
 		User user = (User) session.getAttribute("user");
 		Integer idUser = user.getId();
 		View view = null;
-		ArrayList<ExtendedItem> searchItems = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
+		List<ExtendedItem> searchItems = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
 		try {
 			idItemAsked = Integer.parseInt(request.getParameter("viewId"));
 			view = new View();
@@ -74,13 +83,8 @@ public class doView extends HttpServlet {
 		itemsSearch = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
 		
 		//redirect to search
-		String path = "search";
-		ServletContext servletContext = getServletContext();
-		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("itemViewed", idItemViewed);
-		webContext.setVariable("searchItem", itemsSearch);
-		webContext.setVariable("user", user);
-		templateEngine.process(path, webContext, response.getWriter());
+		String path = getServletContext().getContextPath() + "/search";
+		response.sendRedirect(path);
 	}
 
 }

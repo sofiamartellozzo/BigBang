@@ -1,22 +1,36 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-	<body>
-		
-			<div th:each="item: ${itemViewed}">
-				<p>[[${item.id}]]</p>
-				<p>[[${item.name}]]</p>
-				<p>[[${item.description}]]</p>
-				<div th:each="entry : ${item.value}"
-          			th:with="vendor=${entry.key},price=${entry.value}">
-					<p>[[${vendor.name}]]([[${vendor.score}]]/5)</p>
-					<p>[[${price.price}]]&euro;</p>
-					<p>free shipping after [[${vendor.free_limit}]]&euro;!</p>
-					<form th:action="@{/doAddCart}" method="post">
-            			<input type="number" name="quantity" value="1" />
-            			<button>add to cart</button>
-          			</form>
-				</div>
-			</div>
-
+	<body th:fragment="extendedItem(item)">
+		<table>
+		<tr>
+        <th></th>
+      </tr>
+      <tr>
+      	<td>[[${item.id}]]</td>
+      	<td>
+          <h3>[[${item.name}]]</h3>
+          <p>[[${item.description}]]</p>
+        </td>
+         <td
+          th:each="entry : ${item.value}"
+          th:with="vendor=${entry.key},price=${entry.value}">
+          <p>
+            <strong>[[${price.price}]]&euro;</strong> by
+            [[${vendor.name}]]([[${vendor.score}]]/5)
+          </p>
+          <p>free shipping after [[${vendor.free_limit}]]&euro;! otherwise,</p>
+          <div th:each="range : ${vendor.ranges}">
+            <p>
+              from [[${range.min}]] to [[${range.max}]] items:
+              [[${range.cost}]]&euro;
+            </p>
+          </div>
+          <form th:action="@{/doAddCart}" method="POST">
+            <input type="number" name="quantity" value="1" />
+            <button>add to cart</button>
+          </form>
+        </td>
+      </tr>
+    </table>
 	</body>
 </html>

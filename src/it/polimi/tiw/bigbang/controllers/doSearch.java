@@ -73,11 +73,14 @@ public class doSearch extends HttpServlet {
 			e.printStackTrace();
 			return;
 		}
+		
+		List<ExtendedItem> viewItem = new ArrayList<>();
 
 		// Redirect to the search Page with the items found
 		String path = "search";
 		ServletContext servletContext = getServletContext();
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		webContext.setVariable("itemViewed", viewItem);
 		webContext.setVariable("searchItem", finalItemSearch);
 		webContext.setVariable("user", user);
 		templateEngine.process(path, webContext, response.getWriter());
