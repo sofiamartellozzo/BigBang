@@ -177,8 +177,8 @@ DROP TABLE IF EXISTS `view` ;
 CREATE TABLE IF NOT EXISTS `view` (
   `id_user` INT NOT NULL,
   `id_item` INT NOT NULL,
-  `date` DATE NOT NULL,
-  PRIMARY KEY (`id_user`, `id_item`),
+  `date` TIMESTAMP NOT NULL,
+  PRIMARY KEY (`id_user`, `id_item`,`date`),
   CONSTRAINT `view_id_item`
     FOREIGN KEY (`id_item`)
     REFERENCES `item` (`id`)
@@ -191,9 +191,9 @@ CREATE TABLE IF NOT EXISTS `view` (
     ON UPDATE CASCADE)
 ENGINE = InnoDB;
 
-INSERT INTO `view` (`id_user`,`id_item`,`date`) VALUES (4,3, now());
-INSERT INTO `view` (`id_user`,`id_item`,`date`) VALUES (4,6, now());
-INSERT INTO `view` (`id_user`,`id_item`,`date`) VALUES (4,42, now());
+INSERT INTO `view` (`id_user`,`id_item`,`date`) VALUES (4,3, timestamp("2021-01-26","18:32:11"));
+INSERT INTO `view` (`id_user`,`id_item`,`date`) VALUES (4,6, timestamp("2021-01-26","18:42:11"));
+INSERT INTO `view` (`id_user`,`id_item`,`date`) VALUES (4,42, timestamp("2021-03-30","19:50:11"));
 
 -- -----------------------------------------------------
 -- Table `price`

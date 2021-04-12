@@ -17,7 +17,6 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.SelectedItem;
-import it.polimi.tiw.bigbang.beans.ShippingRange;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
