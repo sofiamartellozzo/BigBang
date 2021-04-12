@@ -32,7 +32,6 @@ public class doAddCart extends HttpServlet {
 
 		ServletContext servletContext = getServletContext();
 		connection = DBConnectionProvider.getConnection(servletContext);
-
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -84,12 +83,23 @@ public class doAddCart extends HttpServlet {
 			if (request.getParameter("sub") != null) {
 				decrement = true;
 			}
-
 		} catch (Exception e) {
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value quantity total");
 			return;
 		}
 
+		//only for 
+		//check if really exist a correspondence between vendor to item
+		PriceDAO priceDAO = new PriceDAO(connection);
+		Price price = new Price();
+		try {
+			price = priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd);
+		} catch (SQLException e) {
+			request.getSession().setAttribute("cart", cart);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+		}
+		
+	
 		// Search if vendor is present yet
 		boolean vendorIsPresent = false;
 		Vendor selectedVendor = null;
@@ -124,14 +134,16 @@ public class doAddCart extends HttpServlet {
 				}
 
 				// Collect information about the price of the specific item
-				PriceDAO priceDAO = new PriceDAO(connection);
+				/*
+				 * PriceDAO priceDAO = new PriceDAO(connection);
+				 
 				Price price = new Price();
 				try {
 					price = priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd);
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
-
+				*/
 				selectedItem = new SelectedItem();
 				selectedItem.setItem(item);
 				selectedItem.setQuantity(quantity);
@@ -169,13 +181,16 @@ public class doAddCart extends HttpServlet {
 			}
 
 			// Collect information about the price of the specific item
-			PriceDAO priceDAO = new PriceDAO(connection);
+			/*
+			 * PriceDAO priceDAO = new PriceDAO(connection);
+			 
 			Price price = new Price();
 			try {
 				price = priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+			*/
 
 			// Collect information about vendor
 			VendorDAO vendorDAO = new VendorDAO(connection);
