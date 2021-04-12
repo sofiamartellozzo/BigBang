@@ -101,4 +101,13 @@
 		<servlet-name>goOrders</servlet-name>
 		<url-pattern>/orders</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>doView</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doView</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doView</servlet-name>
+		<url-pattern>/doView</url-pattern>
+	</servlet-mapping>
 </web-app>

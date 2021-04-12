@@ -36,15 +36,28 @@ public class doSearch extends HttpServlet {
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 		
-		//each time I do a search, remove all old items searched and visualized
-		request.getSession().removeAttribute("itemSearch");
-		request.getSession().removeAttribute("itemViewed");
+		List<ExtendedItem> viewItem = (List<ExtendedItem>) session.getAttribute("itemViewed");
+		List<ExtendedItem> finalItemSearch = (List<ExtendedItem>) session.getAttribute("itemSearch");
+		
+		boolean clearViewedItemList = true;
+		if(session.getAttribute("clearViewItemList")!=null) {
+			clearViewedItemList = (boolean)session.getAttribute("clearViewItemList");
+		}
+	
+		//check if is a new search 
+		if (clearViewedItemList) {
+			//each time I do a search, remove all old items searched and visualized
+			request.getSession().removeAttribute("itemSearch");
+			request.getSession().removeAttribute("itemViewed");
+		
+		
 
 		// Get the search parameter, so the items asked
 		String itemSearch = null;
@@ -61,7 +74,7 @@ public class doSearch extends HttpServlet {
 		ItemDAO itemDAO = new ItemDAO(connection);
 		ExtendedItemDAO extendedItemDAO = new ExtendedItemDAO(connection);
 		List<Item> searchItems = new ArrayList<>();
-		List<ExtendedItem> finalItemSearch = new ArrayList<>();
+		finalItemSearch = new ArrayList<>();
 		try {
 			searchItems = itemDAO.findItemsByWord(itemSearch);
 			finalItemSearch = extendedItemDAO.findAllItemDetails(searchItems);
@@ -74,7 +87,12 @@ public class doSearch extends HttpServlet {
 			return;
 		}
 		
-		List<ExtendedItem> viewItem = new ArrayList<>();
+		
+		viewItem = new ArrayList<>();
+		
+		}
+		
+		session.setAttribute("clearViewItemList", true);
 
 		// Redirect to the search Page with the items found
 		String path = "search";

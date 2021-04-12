@@ -55,9 +55,10 @@ public class doView extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		Integer idUser = user.getId();
 		View view = null;
-		List<ExtendedItem> searchItems = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
+		//List<ExtendedItem> searchItems = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
 		try {
 			idItemAsked = Integer.parseInt(request.getParameter("viewId"));
+			System.out.println(idItemAsked);
 			view = new View();
 			view.setUser_id(idUser);
 			view.setItem_id(idItemAsked);
@@ -71,20 +72,28 @@ public class doView extends HttpServlet {
 		try {
 			viewDAO.createView(idUser, idItemAsked);
 		}catch (SQLException e1) {
+			e1.printStackTrace();
 			response.sendError(HttpServletResponse.SC_PRECONDITION_FAILED, "Problem on adding a new view!");
 			return;
 		}
 		
 		//saving the viewId in the session
-		List<Integer> idItemViewed = new ArrayList<>();
+		List<Integer> idItemViewed = new ArrayList<Integer>();
+		if(session.getAttribute("itemViewed")!=null) {
+			idItemViewed = (List<Integer>) session.getAttribute("itemViewed");
+		}
 		idItemViewed.add(idItemAsked);
 		session.setAttribute("itemViewed", idItemViewed);
-		List<ExtendedItem> itemsSearch = new ArrayList<>();
-		itemsSearch = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
+		//List<ExtendedItem> itemsSearch = new ArrayList<>();
+		//itemsSearch = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
+		
+		session.setAttribute("clearViewItemList", false);
 		
 		//redirect to search
-		String path = getServletContext().getContextPath() + "/search";
-		response.sendRedirect(path);
-	}
+		String path = getServletContext().getContextPath()+ "/search";
+	    response.sendRedirect(path);
+		
+    }
+	
 
 }
