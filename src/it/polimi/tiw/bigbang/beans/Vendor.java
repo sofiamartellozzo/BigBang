@@ -6,7 +6,7 @@ public class Vendor {
 	private int id;
 	private String name;
 	private int score;
-	private int free_limit;
+	private float free_limit;
 	private List<ShippingRange> ranges;
 	
 	public List<ShippingRange> getRanges() {
@@ -33,10 +33,10 @@ public class Vendor {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	public int getFree_limit() {
+	public float getFree_limit() {
 		return free_limit;
 	}
-	public void setFree_limit(int free_limit) {
+	public void setFree_limit(float free_limit) {
 		this.free_limit = free_limit;
 	}
 	

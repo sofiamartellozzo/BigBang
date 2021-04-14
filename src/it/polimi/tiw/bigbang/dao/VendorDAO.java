@@ -30,8 +30,7 @@ public class VendorDAO {
 				v.setId(resultVendors.getInt("id"));
 				v.setName(resultVendors.getString("name"));
 				v.setScore(resultVendors.getInt("score"));
-				v.setFree_limit(resultVendors.getInt("free_limit"));
-
+				v.setFree_limit(resultVendors.getFloat("free_limit"));
 				vendors.add(v);
 			}
 		}
@@ -52,7 +51,7 @@ public class VendorDAO {
 						v.setId(resultVendors.getInt("id"));
 						v.setName(resultVendors.getString("name"));
 						v.setScore(resultVendors.getInt("score"));
-						v.setFree_limit(resultVendors.getInt("free_limit"));
+						v.setFree_limit(resultVendors.getFloat("free_limit"));
 						v.setRanges(new ArrayList<ShippingRange>());
 						try (PreparedStatement pStatementRanges = con.prepareStatement(shippingRangeQuery)) {
 							pStatementRanges.setInt(1, id);
@@ -91,7 +90,7 @@ public class VendorDAO {
 					v.setId(resultVendors.getInt("id"));
 					v.setName(resultVendors.getString("name"));
 					v.setScore(resultVendors.getInt("score"));
-					v.setFree_limit(resultVendors.getInt("free_limit"));
+					v.setFree_limit(resultVendors.getFloat("free_limit"));
 					v.setRanges(new ArrayList<ShippingRange>());
 					try (PreparedStatement pStatementRanges = con.prepareStatement(shippingRangeQuery)) {
 						pStatementRanges.setInt(1, vendorId);

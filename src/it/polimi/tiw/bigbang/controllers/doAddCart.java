@@ -62,11 +62,13 @@ public class doAddCart extends HttpServlet {
 		Integer quantity = 1;
 		boolean decrement = false;
 
+		//controllo che ho veramente passato un intero?
+		
 		// Read variables from request
 		try {
 			vendorAdd = Integer.parseInt(request.getParameter("vendorId"));
-			if (vendorAdd == null) {
-				throw new Exception("Missing or empty credential value vendor");
+			if (vendorAdd == null || vendorAdd<0) {
+				throw new Exception("Missing or wrong credential value vendor");
 			}
 
 			itemAdd = Integer.parseInt(request.getParameter("itemId"));
