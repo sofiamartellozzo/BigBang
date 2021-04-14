@@ -1,32 +1,20 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <!-- <head>
-    <link rel="stylesheet" href="../../../css/main.css" />
-  </head> -->
   <body>
     <header>
-      <h1>BigBang</h1>
+      <a href="#" th:href="@{/home}"><h1>BigBang</h1></a>
+      <form action="#" th:action="@{/search}" method="GET">
+        <input type="text" name="keyword" placeholder="search..." />
+      </form>
       <nav>
-        <ul class="nav-links">
-          <li>
-            <a href="#" th:href="@{/home}">Home</a>
-          </li>
-          <li>
-            <a href="#" th:href="@{/cart}">Cart</a>
-          </li>
-          <li>
-            <a href="#" th:href="@{/orders}">Orders</a>
-          </li>
-          <li>
-            <form action="#" th:action="@{/search}" method="GET">
-              <input type="text" name="keyword" placeholder="search..." />
-            </form>
-          </li>
-        </ul>
+        <a href="#" th:href="@{/cart}">Cart</a>
+        <a href="#" th:href="@{/orders}">Orders</a>
       </nav>
       <div>
-        <span th:text="|${user.name} ${user.surname}|">John Doe</span>
-        <a href="#" th:href="@{/logout}"><button>Logout</button></a>
+        <span th:text="|${user.name} ${user.surname}|">John Doe </span>
+        <a href="#" th:href="@{/logout}"
+          ><i class="fa fa-sign-out" aria-hidden="true"></i
+        ></a>
       </div>
     </header>
   </body>
