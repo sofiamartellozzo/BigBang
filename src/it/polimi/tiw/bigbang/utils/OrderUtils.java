@@ -20,7 +20,8 @@ public class OrderUtils {
 		for (SelectedItem s : items) {
 			total = total + (s.getCost() * s.getQuantity());
 		}
-
+//se free limit è posto a null?
+		
 		if (total >= vendor.getFree_limit()) {
 			shippingPrice = 0;
 		} else {

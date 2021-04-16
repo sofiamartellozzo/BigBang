@@ -58,14 +58,15 @@ public class goCart extends HttpServlet {
 		for (Vendor v : cart.keySet()) {
 
 			float shippingPrice = OrderUtils.calculateShipping(v, cart.get(v));
-			float total = 0;
+			float subtotal = 0;
 			for (SelectedItem s : cart.get(v)) {
-				total = total + (s.getCost() * s.getQuantity());
+				subtotal = subtotal + (s.getCost() * s.getQuantity());
 			}
 
-			float[] costs = new float[2];
+			float[] costs = new float[3];
 			costs[0] = shippingPrice;
-			costs[1] = total;
+			costs[1] = subtotal;
+			costs[2] = shippingPrice + subtotal;
 
 			shipping.put(v, costs);
 		}
