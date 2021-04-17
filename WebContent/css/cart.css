@@ -20,13 +20,17 @@
 }
 
 .vendor-name {
-	font-size: 20px;
+	font-size: 25px;
 	font-weight: bold;
 }
 
 table {
 	width: 100%;
 	border-bottom: 2px solid #ddd;
+}
+
+.table-item{
+	 border-collapse: collapse;
 }
 
 .item {
@@ -91,6 +95,7 @@ table {
 
 .shipping-price {
 	padding-left: 8px;
+	font-style: italic;
 }
 
 .total {
@@ -102,6 +107,7 @@ table {
 
 .total-price {
 	padding-left: 8px;
+	font-weight: bold;
 }
 
 .order-button {
@@ -157,6 +163,28 @@ table {
 .prices-setting-bis {
 	display: flex;
 	flex-direction: row;
-	justify-content: space-around;
+	justify-content: center;
 	align-items: center;
+}
+
+.checked{
+	color: #F3A712;
+}
+
+.animation {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  animation-name: example;
+  animation-duration: 5s;
+  animation-direction: linear; 
+}
+
+@keyframes example {
+  from {
+    width: 0;
+  }
+  to {
+    width: 300px;
+  }
 }
