@@ -6,7 +6,11 @@
 <body>
 	<div th:replace="~{partials/header :: header}"></div>
 	<section>
-		<h1>Items in your cart</h1>
+		<h1>
+			<div class="animation">
+				Items in your cart <i class="fa fa-shopping-cart"></i>
+			</div>
+		</h1>
 		<div th:each="cart : ${cart}"
 			th:with="vendor=${cart.key},itemselected=${cart.value}">
 			<div class="vendor-section">
@@ -28,11 +32,13 @@
 							<div class="item-name" th:text="${entry.item.name}">Item
 								name</div>
 						</td>
-						<td> <div class="prices-setting-bis">
+						<td>
+							<div class="prices-setting-bis">
 								<div
 									th:text="${#numbers.formatDecimal(entry.cost, 1, 'COMMA', 2, 'POINT')}"></div>
-								<div class="single-price-setting" >&euro;/cad.</div>
-							</div></td>
+								<div class="single-price-setting">&euro;/cad.</div>
+							</div>
+						</td>
 						<td>
 							<div class="item-quantity">
 								<form
