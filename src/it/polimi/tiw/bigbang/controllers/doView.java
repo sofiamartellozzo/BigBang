@@ -8,7 +8,6 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +18,6 @@ import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
-import it.polimi.tiw.bigbang.beans.ExtendedItem;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.View;
 import it.polimi.tiw.bigbang.dao.ViewDAO;
@@ -47,7 +45,7 @@ public class doView extends HttpServlet {
     
     @SuppressWarnings("unchecked")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		System.out.println("I arrived here");
+		
     	HttpSession session = request.getSession();
 		
 		//get the id of the item of wich the user ask the visualization
@@ -55,10 +53,9 @@ public class doView extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		Integer idUser = user.getId();
 		View view = null;
-		//List<ExtendedItem> searchItems = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
 		try {
 			idItemAsked = Integer.parseInt(request.getParameter("viewId"));
-			System.out.println(idItemAsked);
+			
 			view = new View();
 			view.setUser_id(idUser);
 			view.setItem_id(idItemAsked);
@@ -84,8 +81,7 @@ public class doView extends HttpServlet {
 		}
 		idItemViewed.add(idItemAsked);
 		session.setAttribute("itemViewed", idItemViewed);
-		//List<ExtendedItem> itemsSearch = new ArrayList<>();
-		//itemsSearch = (ArrayList<ExtendedItem>) session.getAttribute("itemSearch");
+		
 		
 		session.setAttribute("clearViewItemList", false);
 		

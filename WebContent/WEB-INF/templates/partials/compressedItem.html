@@ -1,20 +1,21 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 	<body th:fragment="compressedItem(item)">
-	<table>
-		<tr>
-        <th></th>
-      </tr>
-      <tr>
-      	<td>[[${item.id}]]</td>
-      	<td>[[${item.name}]]</td>
-      	<td>[[${item.value.values.iterator().next().price}]]</td>
-     	<td>
-		<form th:action="@{|/doView?viewId=${item.id}|}" method="POST">
-				<button type="submit">view</button>
+	<div class="item-card">
+	
+		
+      	<h1>[[${item.id}]]</h1>
+      	<h1>[[${item.name}]]</h1>
+      	<h1>[[${item.value.values.iterator().next().price}]]&euro;</h1>
+     	
+		<form class="view-button"
+		th:action="@{|/doView?viewId=${item.id}|}" method="POST">
+				<button class="view" type="submit">
+				<span>view</span>
+				</button>
 			</form>
-			</td>
-		</tr>
-		</table>
+			
+		
+		</div>
 	</body>
 </html>

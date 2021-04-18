@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
   <head th:replace="partials/head :: common_head('search')"></head>
   <body>
     <div th:replace="~{partials/header :: header}"></div>
     <h2>Your search returned [[${searchItem.size()}]] results</h2>
-    <table th:if="${searchItem.size()>0}">
-      <tr>
-        <th>Code</th>
-        <th>Name</th>
-        <th>Price</th>
-      </tr>
-      <tr>
-      	<td></td>
-      </tr>
-     </table>
+    <div th:if="${searchItem.size()>0}">
+    <div class="item">
       <div th:each="item : ${searchItem}">
       	<div th:replace="${itemViewed.contains(item.id)} ? 
         	~{partials/extendedItem :: extendedItem(${item})} :
         	~{partials/compressedItem :: compressedItem(${item})}">
         </div>
       </div>
+     </div>
+    </div>
     
-    <a href= #top>--->Roll up to the top</a>
+    <a class="topBtn" href=#top><i class="fas fa-arrow-alt-circle-up"></i>Top</a>
+    
   </body>
 </html>
 
