@@ -110,4 +110,13 @@
 		<servlet-name>doView</servlet-name>
 		<url-pattern>/doView</url-pattern>
 	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>doRegister</servlet-name>
+		<servlet-class>it.polimi.tiw.bigbang.controllers.doRegister</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>doRegister</servlet-name>
+		<url-pattern>/register</url-pattern>
+	</servlet-mapping>
 </web-app>

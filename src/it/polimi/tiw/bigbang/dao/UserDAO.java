@@ -35,5 +35,27 @@ public class UserDAO {
 			}
 		}
 	}
+	
+	public void createUser(String name, 
+		String surname ,
+		String email,
+		String pwd ,
+		
+		String address) {
+		
+		String query = "INSERT INTO user (name,surname,email,password, address) VALUES (?,?,?,?,?)";
+		try(PreparedStatement preparedStatement = con.prepareStatement(query);){
+			preparedStatement.setString(1, name);
+			preparedStatement.setString(2, surname);
+			preparedStatement.setString(3, email);
+			preparedStatement.setString(4, pwd);
+			preparedStatement.setString(5, address);
+			preparedStatement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
 
 }
