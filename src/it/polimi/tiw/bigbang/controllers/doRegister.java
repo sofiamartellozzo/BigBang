@@ -14,6 +14,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.dao.UserDAO;
+import it.polimi.tiw.bigbang.utils.AuthUtils;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -72,7 +73,7 @@ public class doRegister extends HttpServlet {
 		
 		//create new user in DB
 		UserDAO userDAO = new UserDAO(connection);
-		userDAO.createUser(name, surname, email, pwd, address);
+		userDAO.createUser(name, surname, email, AuthUtils.encryptString(pwd), address);
 		
 		//redirect to the login page
 		String loginPath = request.getServletContext().getContextPath() + "/login";
