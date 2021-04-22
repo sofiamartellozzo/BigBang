@@ -26,6 +26,7 @@ import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
 import it.polimi.tiw.bigbang.dao.UserDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
+import it.polimi.tiw.bigbang.utils.AuthUtils;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -71,7 +72,7 @@ public class doLogin extends HttpServlet {
 		UserDAO userDao = new UserDAO(connection);
 		User user = null;
 		try {
-			user = userDao.checkCredentials(email, pwd);
+			user = userDao.checkCredentials(email, AuthUtils.encryptString(pwd));
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to check credentials");
 			return;
