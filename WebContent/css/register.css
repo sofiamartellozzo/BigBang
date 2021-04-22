@@ -5,7 +5,7 @@ height: auto;
 }
 .loginImg img {
   width: 100%;
-  clip-path: polygon(0 0, 100% 0%, 73% 100%, 0% 100%);
+  clip-path: polygon(0 0, 100% 0%, 100% 100%, 27% 100%);
 }
 .loginForm{
   width: 50%;
@@ -25,11 +25,10 @@ height: auto;
   flex-direction: row;
 }
 
-.register{
+.login{
   text-decoration: underline;
 }
-
-.loginButton{
+.registerButton{
 	width: 30%;
 	padding: 5 px;
 	background-color: #b80c09;

@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="partials/head :: common_head('login')"></head>
+  <head th:replace="partials/head :: common_head('register')"></head>
   <body>
-    <div class="box">
-      <div class="form">
-        <h1>BigBang</h1>
-        <h2>a new frontier of e-commerce</h2>
-
+    <div class="container">
+    <div class="loginForm">
+      <div class="formContainer">
+       <img th:src="@{/images/logo.png}" alt="logo">
+        <h3>a new frontier of e-commerce</h3>
+		<br>
         <form action="register" method="POST">
           <input type="text" placeholder="name" name="name" required />
           <br />
@@ -34,11 +35,18 @@
           <input type="text" placeholder="address" name="address" required />
           <br />
           <br />
-          <input type="submit" value="login" />
+          <input type="submit" value="register" class="registerButton"/>
           <p th:text=" ${errorMsg}"></p>
         </form>
-        <a th:href="@{/login}">register</a>
+        <a th:href="@{/login}" class="login">login</a>
       </div>
     </div>
+    
+    <div class="loginImg">
+      <img th:src="@{/images/shopping.jpg}" alt="loginImg" >
+    </div>
+    
+    </div>
+    
   </body>
 </html>

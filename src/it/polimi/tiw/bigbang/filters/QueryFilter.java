@@ -50,6 +50,6 @@ public class QueryFilter implements Filter {
 	}
 	
 	private boolean isPathResource(String path) {
-		return path.endsWith(".css") || path.endsWith(".jpg") || path.endsWith(".js");
+		return path.endsWith(".css") || path.endsWith(".jpg") || path.endsWith(".js")|| path.endsWith(".png");
 	}
 }
