@@ -44,15 +44,15 @@ CREATE TABLE IF NOT EXISTS `user` (
   `name` VARCHAR(45) NOT NULL,
   `surname` VARCHAR(45) NOT NULL,
   `email` VARCHAR(60) NOT NULL,
-  `password` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(256) NOT NULL,
   `address` VARCHAR(60) NOT NULL,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
-INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (1,'Sofia','Martellozzo','sofia.martellozzo@mail.polimi.it','prova1','via , Milano');
-INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (2,'Margherita','Musumeci','margherita.musumeci@mail.polimi.it','prova2','via , Milano');
-INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (3,'Alberto Maria','Mosconi','alberto.mosconi@mail.polimi.it','prova3','via , Pavia');
-INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (4,'Pluto','Manzo','a@a.com','a','via , Topolinia');
+INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (1,'Sofia','Martellozzo','sofia.martellozzo@mail.polimi.it','9df9f680dba6c3f53908aae89dd7efb4c6850f85203c9dfd8d99c14063c78556','via , Milano');
+INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (2,'Margherita','Musumeci','margherita.musumeci@mail.polimi.it','a3355922718b15dea30b5bb5ba073288afbbae25aba42f00f27e3b17f1aafd5c','via , Milano');
+INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (3,'Alberto Maria','Mosconi','alberto.mosconi@mail.polimi.it','0a2ddaeb1848cb8522247155bda16bff428e00acf9d34c235c955dad85059a60','via , Pavia');
+INSERT INTO `user` (`id`,`name`,`surname`,`email`,`password`,`address`) VALUES (4,'Pluto','Manzo','a@a.com','80084bf2fba02475726feb2cab2d8215eab14bc6bdd8bfb2c8151257032ecd8b','via , Topolinia');
 
 -- -----------------------------------------------------
 -- Table `order_info`
