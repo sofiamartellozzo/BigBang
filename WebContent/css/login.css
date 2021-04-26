@@ -1,39 +1,41 @@
 .loginImg {
-
-height: auto;
-  width: 50%;
+	height: auto;
+	width: 50%;
 }
+
 .loginImg img {
-  width: 100%;
-  clip-path: polygon(0 0, 100% 0%, 73% 100%, 0% 100%);
-}
-.loginForm{
-  width: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-.formContainer{
-  
-  text-align: center;
-  border-radius: 8px;
-  padding: 20px;
-}
-.container{
-  display: flex;
-  flex-direction: row;
+	width: 100%;
+	clip-path: polygon(0 0, 100% 0%, 73% 100%, 0% 100%);
 }
 
-.register{
-  text-decoration: underline;
+.loginForm {
+	width: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
 }
 
-.loginButton{
+.formContainer {
+	text-align: center;
+	border-radius: 8px;
+	padding: 20px;
+}
+
+.container {
+	display: flex;
+	flex-direction: row;
+}
+
+.register {
+	text-decoration: underline;
+}
+
+.loginButton {
 	width: 30%;
 	padding: 5 px;
 	background-color: #b80c09;
 	color: #fff;
-	 border-radius: 8px;
-	 font-size: 15px;
+	border-radius: 8px;
+	font-size: 15px;
 }
