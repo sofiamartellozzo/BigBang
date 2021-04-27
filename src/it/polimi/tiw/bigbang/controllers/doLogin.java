@@ -91,8 +91,8 @@ public class doLogin extends HttpServlet {
 		} else {
 			request.getSession().setAttribute("user", user);
 
+			/*
 			// just for debugging
-
 			HashMap<Vendor, List<SelectedItem>> cart = new HashMap<Vendor, List<SelectedItem>>(); 
 			// catch information about vendor
 			for (int i = 1; i < 3; i++) {
@@ -131,8 +131,13 @@ public class doLogin extends HttpServlet {
 				ls.add(selectedItem);
 				cart.put(vendor, ls);
 			}
+			*/
 			
-			request.getSession().setAttribute("cart", cart);
+			//request.getSession().setAttribute("cart", cart);
+	
+			
+			//[VendorId || ItemId, Quantity]
+			request.getSession().setAttribute("cartSession", new HashMap<Integer, HashMap<Integer,Integer>>());
 			path = getServletContext().getContextPath() + "/home";
 			response.sendRedirect(path);
 		}

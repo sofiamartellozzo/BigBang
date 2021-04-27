@@ -52,7 +52,8 @@ public class PriceDAO {
 				pstatement.setInt(2, vendor);
 				try (ResultSet result = pstatement.executeQuery();) {
 					if (!result.isBeforeFirst())
-						return null;
+						{System.out.println("null");
+						return null;}
 				else {
 					result.next();
 					Price price = new Price();
