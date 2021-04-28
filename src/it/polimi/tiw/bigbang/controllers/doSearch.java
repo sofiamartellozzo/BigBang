@@ -54,7 +54,6 @@ public class doSearch extends HttpServlet {
 		}
 		
 	
-	
 		//check if is a new search 
 		//so remove all the old viewed Items
 		if (clearViewedItemList) {

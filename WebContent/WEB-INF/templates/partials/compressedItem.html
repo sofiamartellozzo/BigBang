@@ -1,18 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<<<<<<< HEAD
+
 	<body th:fragment="compressedItem(item,keyword)">
 	
 	
 	<div class="item-card">
-=======
-	<body th:fragment="compressedItem(item)">
-	<div class="item-card card">
->>>>>>> branch 'main' of https://github.com/sofiamartellozzo/BigBang.git
-	
-	
 		
-      	<h1>[[${item.id}]]</h1>
+      	<h1>#[[${item.id}]]</h1>
       	<h1>[[${item.name}]]</h1>
       	<h1>[[${item.value.values.iterator().next().price}]]&euro;</h1>
      	
