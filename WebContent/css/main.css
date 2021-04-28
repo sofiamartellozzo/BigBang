@@ -47,21 +47,37 @@ header {
   left: 0;
   z-index: 1000;
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 5%;
+  padding: 10px 5%;
   background-color: #24252a;
   color: #fff;
+}
+
+header div {
+	flex: 1 1 20%;
+}
+
+.header-logo {
+	height: 70px;
+}
+
+nav {
+	flex: 1 1 30%;
+	min-width: 42ch;
 }
 
 nav a {
   display: inline-block;
   padding: 10px 20px;
+  margin: 0 5px;
 }
 
 nav a:hover {
   color: #24252a;
   background-color: #fff;
+  transition: 200ms;
 }
 
 input {
@@ -69,7 +85,7 @@ input {
 }
 
 header form {
-  width: 55%;
+	flex: 1 1 50%;
 }
 
 header form input {
