@@ -4,13 +4,20 @@
   <body>
     <div th:replace="~{partials/header :: header}"></div>
     <br>
-    <h2>Your search returned [[${searchItem.size()}]] results</h2>
+    <div class= "numberResult">
+    <h2>Your search for "[[${keyword}]]" returned [[${searchItem.size()}]] results</h2>
+    </div>
+    <div class="error">
+    	
+    </div>
+    
     <div th:if="${searchItem.size()>0}">
     <div class="item">
       <div th:each="item : ${searchItem}">
       	<div th:replace="${itemViewed.contains(item.id)} ? 
         	~{partials/extendedItem :: extendedItem(${item})} :
-        	~{partials/compressedItem :: compressedItem(${item})}">
+        	~{partials/compressedItem :: compressedItem(${item},${keyword})}">
+        
         </div>
       </div>
      </div>

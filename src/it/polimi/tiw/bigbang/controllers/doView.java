@@ -40,6 +40,7 @@ public class doView extends HttpServlet {
     	String path = "search";
 		ServletContext servletContext = getServletContext();
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		
 		templateEngine.process(path, webContext, response.getWriter());
     }
     
@@ -48,13 +49,18 @@ public class doView extends HttpServlet {
 		
     	HttpSession session = request.getSession();
 		
-		//get the id of the item of wich the user ask the visualization
+		//get the id of the item of which the user ask the visualization
 		Integer idItemAsked = null;
+		String wordSearchedString = null;
 		User user = (User) session.getAttribute("user");
 		Integer idUser = user.getId();
 		View view = null;
 		try {
 			idItemAsked = Integer.parseInt(request.getParameter("viewId"));
+			wordSearchedString = request.getParameter("keyword");
+			if (idItemAsked == null || idItemAsked < 0 || wordSearchedString == null || wordSearchedString.isEmpty()) {
+				throw new Exception("Id asked to be viewed not valid or problem in word searched error");
+			}
 			
 			view = new View();
 			view.setUser_id(idUser);
@@ -78,15 +84,16 @@ public class doView extends HttpServlet {
 		List<Integer> idItemViewed = new ArrayList<Integer>();
 		if(session.getAttribute("itemViewed")!=null) {
 			idItemViewed = (List<Integer>) session.getAttribute("itemViewed");
+			System.out.println("create new session attribute");
 		}
 		idItemViewed.add(idItemAsked);
 		session.setAttribute("itemViewed", idItemViewed);
 		
-		
+		//reloading the search page set this boolean attribute to false to not lost this and all old item viewed yet
 		session.setAttribute("clearViewItemList", false);
 		
 		//redirect to search
-		String path = getServletContext().getContextPath()+ "/search";
+		String path = getServletContext().getContextPath()+ "/search?keyword=" +wordSearchedString;
 	    response.sendRedirect(path);
 		
     }
