@@ -1,0 +1,16 @@
+.order {
+  display: flex;
+  flex-direction: column;
+}
+
+.order-info {
+  display: flex;
+}
+
+.order-info div {
+  width: 50%;
+}
+
+.order-info div table {
+  width: 100%;
+}

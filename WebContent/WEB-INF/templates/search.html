@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+<<<<<<< HEAD
   <head th:replace="partials/head :: common_head('search')"></head>
   <body>
     <div th:replace="~{partials/header :: header}"></div>
@@ -15,7 +16,21 @@
     <div class="item">
       <div th:each="item : ${searchItem}">
       	<div th:replace="${itemViewed.contains(item.id)} ? 
+=======
+<head th:replace="partials/head :: common_head('search')"></head>
+<body>
+	<div th:replace="~{partials/header :: header}"></div>
+	<br>
+	<section>
+		<h2>Your search returned [[${searchItem.size()}]] results</h2>
+		<div th:if="${searchItem.size()>0}">
+			<div class="item">
+				<div th:each="item : ${searchItem}">
+					<div
+						th:replace="${itemViewed.contains(item.id)} ? 
+>>>>>>> branch 'main' of https://github.com/sofiamartellozzo/BigBang.git
         	~{partials/extendedItem :: extendedItem(${item})} :
+<<<<<<< HEAD
         	~{partials/compressedItem :: compressedItem(${item},${keyword})}">
         
         </div>
@@ -26,6 +41,17 @@
     <a class="topBtn" href=#top><i class="fas fa-arrow-alt-circle-up"></i>Top</a>
     
   </body>
+=======
+        	~{partials/compressedItem :: compressedItem(${item})}">
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<a class="topBtn" href=#top><i class="fas fa-arrow-alt-circle-up"></i>Top</a>
+	</section>
+</body>
+>>>>>>> branch 'main' of https://github.com/sofiamartellozzo/BigBang.git
 </html>
 
 
