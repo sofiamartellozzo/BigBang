@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
@@ -45,6 +46,7 @@ public class doAddCart extends HttpServlet {
 
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
+		ErrorMessage error = new ErrorMessage();
 
 		// Get items added to cart from session
 		// Rebuilt cart from vendor id and list of item id

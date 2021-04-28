@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
@@ -51,12 +52,14 @@ public class goCart extends HttpServlet {
 
 		//Get items added to cart from session
 		//Rebuilt cart from vendor id and list of item id
+		ErrorMessage error = new ErrorMessage();
+		
 		HashMap<Integer, HashMap<Integer,Integer>> cartSession = new HashMap<Integer, HashMap<Integer,Integer>>();
 		try {
 			cartSession = (HashMap<Integer, HashMap<Integer,Integer>>) session.getAttribute("cartSession");
 		} catch (NumberFormatException | NullPointerException e) {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
-			return;
+			
+			error.setErrorMessage("Resources not found");
 		}
 		
 		//Built Cart
@@ -152,6 +155,7 @@ public class goCart extends HttpServlet {
 
 		String path = "cart";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+		webContext.setVariable("error", error);
 		webContext.setVariable("cart", cart);
 		webContext.setVariable("shipping", shipping);
 		webContext.setVariable("user", user);
