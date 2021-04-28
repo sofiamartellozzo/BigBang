@@ -16,13 +16,13 @@
   <body>
     <div th:replace="~{partials/header :: header}"></div>
     <section>
-      <h1>Orders</h1>
+      <h1>Your orders</h1>
       <div
         th:each="entry : ${orders}"
         th:remove="all-but-first"
         th:with="orderInfo=${entry.key},orderItems=${entry.value},vendorInfo=${vendorDetails.get(orderInfo.id_vendor)}"
       >
-        <div class="order">
+        <div class="order card">
           <em class="text-muted"
             >ordered on
             <span th:text="${#dates.format(orderInfo.date, 'dd/MM/yyyy')}"

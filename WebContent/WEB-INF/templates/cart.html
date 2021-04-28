@@ -12,7 +12,7 @@
 		</h1>
 		<div th:each="cart : ${cart}"
 			th:with="vendor=${cart.key},itemselected=${cart.value}">
-			<div class="vendor-section">
+			<div class="vendor-section card">
 				<div class="vendor-head">
 					<div class="vendor-name">[[${vendor.name}]]</div>
 					<div class="vendor-rate">
