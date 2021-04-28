@@ -2,7 +2,10 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 	<header>
-		<a href="#" th:href="@{/home}"><h1>BigBang</h1></a>
+		<div>
+			<a href="#" th:href="@{/home}"><img class="header-logo"
+				th:src="@{/images/logo-light.png}" /></a>
+		</div>
 		<form action="#" th:action="@{/search}" method="GET">
 			<input type="text" name="keyword" placeholder="search..." />
 		</form>
@@ -10,14 +13,11 @@
 			<a href="#" th:href="@{/cart}">Cart <i
 				class="fa fa-shopping-cart"></i></a> <a href="#" th:href="@{/orders}">Orders
 				<i class="fa fa-file" aria-hidden="true"></i>
+			</a> <span th:text="|${user.name} ${user.surname}|">John Doe </span><a
+				href="#" th:href="@{/logout}"> <i class="fa fa-sign-out"
+				aria-hidden="true"></i>
 			</a>
-
 		</nav>
-		<div>
-			<span th:text="|${user.name} ${user.surname}|">John Doe </span> <a
-				href="#" th:href="@{/logout}"><i
-				class="fa fa-sign-out" aria-hidden="true"></i></a>
-		</div>
 	</header>
 </body>
 </html>

@@ -46,16 +46,22 @@ public class doSearch extends HttpServlet {
 		List<ExtendedItem> viewItem = (List<ExtendedItem>) session.getAttribute("itemViewed");
 		List<ExtendedItem> finalItemSearch = (List<ExtendedItem>) session.getAttribute("itemSearch");
 		
+		//as default remove all viewed items because is a new search
 		boolean clearViewedItemList = true;
 		if(session.getAttribute("clearViewItemList")!=null) {
 			clearViewedItemList = (boolean)session.getAttribute("clearViewItemList");
+		
 		}
+		
 	
 		//check if is a new search 
+		//so remove all the old viewed Items
 		if (clearViewedItemList) {
-			//each time I do a search, remove all old items searched and visualized
+			//each time I do a new search, remove all old items searched and visualized
 			request.getSession().removeAttribute("itemSearch");
 			request.getSession().removeAttribute("itemViewed");
+			viewItem = null;
+			}
 		
 		
 
@@ -79,7 +85,7 @@ public class doSearch extends HttpServlet {
 			searchItems = itemDAO.findItemsByWord(itemSearch);
 			finalItemSearch = extendedItemDAO.findAllItemDetails(searchItems);
 			
-			//put the serch items in the session, so they now can be find by doView when redirect to serch page
+			//put the search items in the session, so they now can be find by doView when redirect to search page
 			request.getSession().setAttribute("itemSearch", finalItemSearch);
 		} catch (SQLException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to find items");
@@ -88,11 +94,14 @@ public class doSearch extends HttpServlet {
 		}
 		
 		
-		viewItem = new ArrayList<>();
-		
+		if (viewItem == null) {
+			//no item visualized yet
+			viewItem = new ArrayList<>();
 		}
 		
-		session.setAttribute("clearViewItemList", true);
+		//set it true so each new search clear the attributes
+		//session.setAttribute("clearViewItemList", true);
+		session.removeAttribute("clearViewItemList");
 
 		// Redirect to the search Page with the items found
 		String path = "search";
@@ -101,6 +110,7 @@ public class doSearch extends HttpServlet {
 		webContext.setVariable("itemViewed", viewItem);
 		webContext.setVariable("searchItem", finalItemSearch);
 		webContext.setVariable("user", user);
+		webContext.setVariable("keyword", itemSearch);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 	
