@@ -24,14 +24,14 @@ public class ExtendedItemDAO {
 
 		List<ExtendedItem> extendedItems = new ArrayList<>();
 		// extract a list of the IDs of the items
-		Map<Integer, Item> itemIdItemMap = new HashMap<>();
+		Map<Integer, Item> itemIdItemMap = new LinkedHashMap<>();
 		List<Integer> itemIDs = new ArrayList<>();
 		for (Item item : items) {
 			itemIDs.add(item.getId());
 			itemIdItemMap.put(item.getId(), item);
 		}
 		// for each item obtain the list of prices it's sold at
-		Map<Integer, List<Price>> itemPrices = new HashMap<>();
+		Map<Integer, List<Price>> itemPrices = new LinkedHashMap<>();
 		PriceDAO priceDAO = new PriceDAO(connection);
 		try {
 			itemPrices = priceDAO.findManyByItemIDs(itemIDs);

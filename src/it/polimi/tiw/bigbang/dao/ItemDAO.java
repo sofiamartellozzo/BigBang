@@ -70,7 +70,7 @@ public class ItemDAO {
 
 	public List<Item> findLastViewedItemsByUser(int userID) throws SQLException {
 
-		String query = "SELECT I.* FROM item AS I, view as V WHERE V.id_user = ? AND V.id_item = I.id ORDER BY date LIMIT 5";
+		String query = "SELECT I.* FROM item AS I, view as V WHERE I.id = V.id_item AND V.id_user = ? GROUP BY V.id_item ORDER BY max(V.date) DESC LIMIT 5";
 
 		List<Item> viewedItems = new ArrayList<>();
 
@@ -89,11 +89,10 @@ public class ItemDAO {
 								setPicture(result.getString("picture"));
 							}
 						};
-						viewedItems.add(item);
+						viewedItems.add(item);					
 					}
 			}
 		}
-
 		return viewedItems;
 	}
 

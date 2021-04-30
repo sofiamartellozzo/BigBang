@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import java.util.List;
@@ -98,7 +99,7 @@ return prices;
 
 public Map<Integer, List<Price>> findManyByItemIDs(List<Integer> itemIDs) throws SQLException {
 	  String query = "SELECT id_item, id_vendor, price FROM price WHERE id_item = ?";
-	  Map<Integer, List<Price>> itemIDPriceListMap = new HashMap<>();
+	  Map<Integer, List<Price>> itemIDPriceListMap = new LinkedHashMap<>();
 	  
 	  for (int itemID : itemIDs) {
 	   List<Price> currentItemPrices = new ArrayList<>();
