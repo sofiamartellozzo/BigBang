@@ -5,11 +5,11 @@
 <body>
 	<div th:replace="~{partials/header :: header}"></div>
 	<section>
-		<div>
-			<div class="animation">
-				Items in your cart <i class="fa fa-shopping-cart"></i>
-			</div>
-			<div class="error-message" th:if="${error.errorMessage!=null}"><span th:text="${error.errorMessage}" ></span></div>
+		<div class="animation">
+			Items in your cart <i class="fa fa-shopping-cart"></i>
+		</div>
+		<div class="error-message" th:if="${error.errorMessage!=null}">
+			<span th:text="${error.errorMessage}"></span>
 		</div>
 		<div th:each="cart : ${cart}"
 			th:with="vendor=${cart.key},itemselected=${cart.value}">

@@ -18,12 +18,12 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.Vendor;
+import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
@@ -47,27 +47,41 @@ public class goCart extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+		// get active user
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
 
-		//Get items added to cart from session
-		//Rebuilt cart from vendor id and list of item id
-		ErrorMessage error = new ErrorMessage();
-		
-		HashMap<Integer, HashMap<Integer,Integer>> cartSession = new HashMap<Integer, HashMap<Integer,Integer>>();
-		try {
-			cartSession = (HashMap<Integer, HashMap<Integer,Integer>>) session.getAttribute("cartSession");
-		} catch (NumberFormatException | NullPointerException e) {
-			
-			error.setErrorMessage("Resources not found");
+		// space for errors
+		ErrorMessage errorMessage;
+		errorMessage = (ErrorMessage) session.getAttribute("error");
+
+		// Rebuilt cart from vendor id and list of item id
+		HashMap<Vendor, List<SelectedItem>> cart = null;
+		HashMap<Vendor, float[]> shipping = null;
+
+		//error added to session from doAddCart
+		if (errorMessage != null) {
+			String path = "cart";
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("cart", cart);
+			webContext.setVariable("shipping", shipping);
+			webContext.setVariable("user", user);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
+		}else {
+			errorMessage=new ErrorMessage();
 		}
-		
-		//Built Cart
-				HashMap<Vendor, List<SelectedItem>> cart = null;
-				HashMap<Vendor, float[]> shipping =null;
-		
-		if(cartSession.isEmpty()) {
-			
+
+		// Get items added to cart from session
+		HashMap<Integer, HashMap<Integer, Integer>> cartSession = new HashMap<Integer, HashMap<Integer, Integer>>();
+		try {
+			cartSession = (HashMap<Integer, HashMap<Integer, Integer>>) session.getAttribute("cartSession");
+		} catch (NumberFormatException | NullPointerException e) {
+
+			errorMessage.setErrorMessage("Resources not found");
+		}
+
+		if (cartSession.isEmpty()) {
 			String path = "cart";
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 			webContext.setVariable("cart", cart);
@@ -76,46 +90,45 @@ public class goCart extends HttpServlet {
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
-		
-		cart = new HashMap<Vendor, List<SelectedItem>>(); 
+
+		cart = new HashMap<Vendor, List<SelectedItem>>();
 		Set<Integer> vendorSet = cartSession.keySet();
-		
+
 		for (int vendor : vendorSet) {
-			
-			// catch information about vendor
+
+			// collect information about vendor
 			VendorDAO vendorDAO = new VendorDAO(connection);
 			Vendor vendorCurrent = new Vendor();
 			try {
-				
+
 				vendorCurrent = vendorDAO.findFullBySingleId(vendor);
 			} catch (SQLException e) {
-				e.printStackTrace();
+				errorMessage.setErrorMessage("Vendor not found");
 			}
-			
+
 			Set<Integer> itemsForVendorSet = cartSession.get(vendor).keySet();
 			List<SelectedItem> selectedItemList = new ArrayList<SelectedItem>();
-			
-			for(int item: itemsForVendorSet) {
-				
-				//catch information about item
+
+			for (int item : itemsForVendorSet) {
+
+				// collect information about item
 				ItemDAO itemDAO = new ItemDAO(connection);
 				Item itemCurrent = new Item();
 				try {
 					itemCurrent = itemDAO.findItemsBySingleId(item);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					errorMessage.setErrorMessage("Item not found");
 				}
-						
-				// catch price
+
+				// collect price
 				PriceDAO priceDAO = new PriceDAO(connection);
 				Price price = new Price();
 				try {
-					price = priceDAO.findPriceBySingleItemId(item,vendor);
+					price = priceDAO.findPriceBySingleItemId(item, vendor);
 				} catch (SQLException e) {
-					e.printStackTrace();
+					errorMessage.setErrorMessage("Item informations not found");
 				}
-				
-				
+
 				SelectedItem selectedItem = new SelectedItem();
 				selectedItem.setItem(itemCurrent);
 				selectedItem.setQuantity(cartSession.get(vendor).get(item));
@@ -124,24 +137,23 @@ public class goCart extends HttpServlet {
 			}
 			cart.put(vendorCurrent, selectedItemList);
 		}
-		
-		/*
-		try {
-			cart = (HashMap<Vendor, List<SelectedItem>>) session.getAttribute("cart");
-		} catch (NumberFormatException | NullPointerException e) {
-			response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
-			return;
-		}
-		 */
-		
-		//Calculate shipping cost and total expenses
-		shipping = new HashMap<Vendor, float[]>(); // <Vendor, [ShippingPrice , Total]>
-		
-		for (Vendor v : cart.keySet()) {
 
-			float shippingPrice = OrderUtils.calculateShipping(v, cart.get(v));
+		/*
+		 * try { cart = (HashMap<Vendor, List<SelectedItem>>)
+		 * session.getAttribute("cart"); } catch (NumberFormatException |
+		 * NullPointerException e) {
+		 * response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
+		 * return; }
+		 */
+
+		// Calculate shipping cost and total expenses
+		shipping = new HashMap<Vendor, float[]>(); // <Vendor, [ShippingPrice , Total]>
+
+		for (Vendor vendor : cart.keySet()) {
+
+			float shippingPrice = OrderUtils.calculateShipping(vendor, cart.get(vendor));
 			float subtotal = 0;
-			for (SelectedItem s : cart.get(v)) {
+			for (SelectedItem s : cart.get(vendor)) {
 				subtotal = subtotal + (s.getCost() * s.getQuantity());
 			}
 
@@ -150,12 +162,13 @@ public class goCart extends HttpServlet {
 			costs[1] = subtotal;
 			costs[2] = shippingPrice + subtotal;
 
-			shipping.put(v, costs);
+			shipping.put(vendor, costs);
 		}
 
 		String path = "cart";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-		webContext.setVariable("error", error);
+
+		webContext.setVariable("error", errorMessage);
 		webContext.setVariable("cart", cart);
 		webContext.setVariable("shipping", shipping);
 		webContext.setVariable("user", user);
