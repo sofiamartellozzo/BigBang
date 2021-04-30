@@ -52,7 +52,7 @@ public class goHome extends HttpServlet {
 			e.printStackTrace();
 		}
 
-		if (items.isEmpty() || items.size() < 5) {
+		if (items == null || items.isEmpty() || items.size() < 5) {
 			List<Item> fillerItems = new ArrayList<>();
 
 			try {
