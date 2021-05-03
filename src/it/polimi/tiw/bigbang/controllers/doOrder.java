@@ -89,7 +89,11 @@ public class doOrder extends HttpServlet {
 		float shipping_cost = OrderUtils.calculateShipping(vendor, selectedItems);
 
 		OrderDAO orderDAO = new OrderDAO(connection);
-		orderDAO.createNewOrder(user.getId(), vendorID, shipping_cost, selectedItems);
+		try {
+			orderDAO.createOrder(user.getId(), vendorID, shipping_cost, selectedItems);
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+		}
 
 		String path = getServletContext().getContextPath() + "/orders";
 		response.sendRedirect(path);
