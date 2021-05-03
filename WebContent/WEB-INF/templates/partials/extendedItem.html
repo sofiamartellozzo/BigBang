@@ -33,7 +33,7 @@
               th:action="@{|/doAddCart?vendorId=${vendor.id}&itemId=${item.id}|}"
               method="POST"
             >
-              <input type="number" name="quantity" value="1" />
+              <input type="number" min="1" name="quantity" value="1" />
               <button>Add to cart</button>
             </form>
           </div>

@@ -94,6 +94,12 @@ th {
 	color: gray;
 }
 
+.errorMessage {
+	color: white;
+	background-color: #b80c09;
+	padding: 10px;
+}
+
 .card {
 	padding: 20px;
 	margin: 20px 0 40px 0;

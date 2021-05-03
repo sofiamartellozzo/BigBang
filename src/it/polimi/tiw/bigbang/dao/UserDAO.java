@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import it.polimi.tiw.bigbang.beans.User;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 
 public class UserDAO {
 	private Connection con;
@@ -14,11 +15,12 @@ public class UserDAO {
 		this.con = connection;
 	}
 
-	public User checkCredentials(String email, String pwd) throws SQLException {
+	public User checkCredentials(String email, String pwd) throws DatabaseException {
 		String query = "SELECT  id, name, surname, email, address FROM user  WHERE email = ? AND password =?";
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, email);
 			pstatement.setString(2, pwd);
+
 			try (ResultSet result = pstatement.executeQuery();) {
 				if (!result.isBeforeFirst()) // no results, credential check failed
 					return null;
@@ -33,18 +35,17 @@ public class UserDAO {
 					return user;
 				}
 			}
+		} catch (SQLException e) {
+			throw new DatabaseException("could not check user credentials.");
 		}
 	}
-	
-	public void createUser(String name, 
-		String surname ,
-		String email,
-		String pwd ,
-		
-		String address) {
-		
+
+	public void createUser(String name, String surname, String email, String pwd,
+
+			String address) {
+
 		String query = "INSERT INTO user (name,surname,email,password, address) VALUES (?,?,?,?,?)";
-		try(PreparedStatement preparedStatement = con.prepareStatement(query);){
+		try (PreparedStatement preparedStatement = con.prepareStatement(query);) {
 			preparedStatement.setString(1, name);
 			preparedStatement.setString(2, surname);
 			preparedStatement.setString(3, email);
@@ -54,8 +55,7 @@ public class UserDAO {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
-		
+
 	}
 
 }
