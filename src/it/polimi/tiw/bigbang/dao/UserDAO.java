@@ -40,9 +40,7 @@ public class UserDAO {
 		}
 	}
 
-	public void createUser(String name, String surname, String email, String pwd,
-
-			String address) {
+	public void createUser(String name, String surname, String email, String pwd,String address) throws DatabaseException {
 
 		String query = "INSERT INTO user (name,surname,email,password, address) VALUES (?,?,?,?,?)";
 		try (PreparedStatement preparedStatement = con.prepareStatement(query);) {
@@ -53,7 +51,7 @@ public class UserDAO {
 			preparedStatement.setString(5, address);
 			preparedStatement.executeUpdate();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw new DatabaseException("could not create a new user!");
 		}
 
 	}

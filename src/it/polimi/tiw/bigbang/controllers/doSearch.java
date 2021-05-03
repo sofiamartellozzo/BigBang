@@ -16,6 +16,7 @@ import javax.servlet.http.HttpSession;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.beans.ExtendedItem;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
@@ -42,10 +43,16 @@ public class doSearch extends HttpServlet {
 			throws ServletException, IOException {
 		
 		HttpSession session = request.getSession();
+		
+		//get the user by the session
 		User user = (User) session.getAttribute("user");
 		
+		//create the variable to store a possible error
+    	ErrorMessage errorMessage;
+		
+		//get the lists of item searched yet or viewed yet by the session, if there are
 		List<ExtendedItem> viewItem = (List<ExtendedItem>) session.getAttribute("itemViewed");
-		List<ExtendedItem> finalItemSearch = (List<ExtendedItem>) session.getAttribute("itemSearch");
+		List<ExtendedItem> extendedItemSearch = (List<ExtendedItem>) session.getAttribute("itemSearch");
 		
 		//as default remove all viewed items because is a new search
 		boolean clearViewedItemList = true;
@@ -54,7 +61,7 @@ public class doSearch extends HttpServlet {
 		
 		}
 		
-	
+		
 		//check if is a new search 
 		//so remove all the old viewed Items
 		if (clearViewedItemList) {
@@ -66,31 +73,57 @@ public class doSearch extends HttpServlet {
 		
 		
 
-		// Get the search parameter, so the items asked
-		String itemSearch = null;
+		// Get the search parameter, so the items asked to be viewed
+		String wordSearched = null;
 		try {
-			itemSearch = request.getParameter("keyword");
-			if (itemSearch == null || itemSearch.isEmpty()) {
+			wordSearched = request.getParameter("keyword");
+			if (wordSearched == null || wordSearched.isEmpty()) {
 				throw new Exception("Missing or empty credential value");
 			}
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
+			errorMessage = new ErrorMessage("Input Error", e.getMessage());
+			String path = "search";
+			ServletContext servletContext = getServletContext();
+			session.removeAttribute("clearViewItemList");
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("user", user);
+			webContext.setVariable("error", errorMessage);
+			webContext.setVariable("searchItem", extendedItemSearch);  //this will be null, so it will return 0 items
+			if (viewItem == null) {
+				//no item visualized yet
+				viewItem = new ArrayList<>();
+			}
+			webContext.setVariable("itemViewed", viewItem);         // no items will be in the List 
+			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
 
 		ItemDAO itemDAO = new ItemDAO(connection);
 		ExtendedItemDAO extendedItemDAO = new ExtendedItemDAO(connection);
-		List<Item> searchItems = new ArrayList<>();
-		finalItemSearch = new ArrayList<>();
+		List<Item> searchItemsId = new ArrayList<>();
+		extendedItemSearch = new ArrayList<>();
 		try {
-			searchItems = itemDAO.findManyByWord(itemSearch);
-			finalItemSearch = extendedItemDAO.findAllItemDetails(searchItems);
+			searchItemsId = itemDAO.findManyByWord(wordSearched);
+			extendedItemSearch = extendedItemDAO.findManyItemsDetailsByItemsId(searchItemsId);
 			
 			//put the search items in the session, so they now can be find by doView when redirect to search page
-			request.getSession().setAttribute("itemSearch", finalItemSearch);
+			request.getSession().setAttribute("itemSearch", extendedItemSearch);
 		} catch (DatabaseException e) {
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to find items");
-			e.printStackTrace();
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
+			String path = "search";
+			ServletContext servletContext = getServletContext();
+			session.removeAttribute("clearViewItemList");
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("user", user);
+			webContext.setVariable("keyword", wordSearched);
+			webContext.setVariable("error", errorMessage);
+			webContext.setVariable("searchItem", extendedItemSearch);  //this will be null, so it will return 0 items
+			if (viewItem == null) {
+				//no item visualized yet
+				viewItem = new ArrayList<>();
+			}
+			webContext.setVariable("itemViewed", viewItem);         // no items will be in the List 
+			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
 		
@@ -109,9 +142,9 @@ public class doSearch extends HttpServlet {
 		ServletContext servletContext = getServletContext();
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("itemViewed", viewItem);
-		webContext.setVariable("searchItem", finalItemSearch);
+		webContext.setVariable("searchItem", extendedItemSearch);
 		webContext.setVariable("user", user);
-		webContext.setVariable("keyword", itemSearch);
+		webContext.setVariable("keyword", wordSearched);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 	

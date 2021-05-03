@@ -20,7 +20,7 @@ public class ExtendedItemDAO {
 		this.connection = connection;
 	}
 
-	public List<ExtendedItem> findAllItemDetails(List<Item> items) {
+	public List<ExtendedItem> findManyItemsDetailsByItemsId(List<Item> items) {
 
 		List<ExtendedItem> extendedItems = new ArrayList<>();
 		// extract a list of the IDs of the items

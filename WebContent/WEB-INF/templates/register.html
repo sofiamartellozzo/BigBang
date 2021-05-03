@@ -35,8 +35,12 @@
           <input type="text" placeholder="address" name="address" required />
           <br />
           <br />
+          <th:block th:if="${error != null}">
+						<div
+							th:replace="partials/error :: error(${error.title}, ${error.body})"></div>
+					</th:block>
           <input type="submit" value="register" class="registerButton"/>
-          <p th:text=" ${errorMsg}"></p>
+          
         </form>
         <a th:href="@{/login}" class="login">login</a>
       </div>

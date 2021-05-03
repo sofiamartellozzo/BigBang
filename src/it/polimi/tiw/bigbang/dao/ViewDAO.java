@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
+
 public class ViewDAO {
 	private Connection con;
 
@@ -13,7 +15,7 @@ public class ViewDAO {
 		this.con = connection;
 	}
 	
-	public void createView(int userId, int itemId) throws SQLException {
+	public void createOneViewByUserIdAndItemId(int userId, int itemId) throws DatabaseException {
 		
 		String query = "INSERT into view (id_user, id_item, date) VALUES(?,?,?)";
 		try(PreparedStatement pstatement = con.prepareStatement(query);){
@@ -21,6 +23,9 @@ public class ViewDAO {
 			pstatement.setInt(2, itemId);
 			pstatement.setTimestamp(3, new Timestamp(Calendar.getInstance().getTime().getTime()));
 			pstatement.executeUpdate();
+		} catch (SQLException e) {
+			// TODO: handle exception
+			throw new DatabaseException("Unable to create a view in DB");
 		}
 	}
 

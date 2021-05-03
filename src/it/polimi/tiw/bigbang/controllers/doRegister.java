@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.dao.UserDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.AuthUtils;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -44,6 +46,11 @@ public class doRegister extends HttpServlet {
 
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		//create the variable to store a possible error
+    	ErrorMessage errorMessage;
+    	
+    	//create the variables 
 		String name = null;
 		String surname = null;
 		String email = null;
@@ -62,18 +69,38 @@ public class doRegister extends HttpServlet {
 				throw new Exception("Missing or empty credential value");
 			}
 		} catch (Exception e) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing credential value");
+			errorMessage = new ErrorMessage("Input Error","Missing credential value");
+			String path = "register";
+			ServletContext servletContext = getServletContext();
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
 		
 		if (!pwd.equals(confirmPwd)) {
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Password don't match!");
+			errorMessage = new ErrorMessage("Input Error","No matching passwords");
+			String path = "register";
+			ServletContext servletContext = getServletContext();
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
 		
 		//create new user in DB
 		UserDAO userDAO = new UserDAO(connection);
-		userDAO.createUser(name, surname, email, AuthUtils.encryptString(pwd), address);
+		try {
+			userDAO.createUser(name, surname, email, AuthUtils.encryptString(pwd), address);
+		} catch (DatabaseException e) {
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
+			String path = "register";
+			ServletContext servletContext = getServletContext();
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
+		}
 		
 		//redirect to the login page
 		String loginPath = request.getServletContext().getContextPath() + "/login";
