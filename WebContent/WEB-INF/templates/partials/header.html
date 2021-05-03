@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<body>
+<body th:fragment="header">
 	<header>
 		<div>
 			<a href="#" th:href="@{/home}"><img class="header-logo"
@@ -19,5 +19,9 @@
 			</a>
 		</nav>
 	</header>
+	<th:block th:if="${error != null}">
+		<div
+			th:replace="partials/error :: error(${error.title}, ${error.body})"></div>
+	</th:block>
 </body>
 </html>

@@ -25,6 +25,7 @@ import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.OrderDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.OrderUtils;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -94,7 +95,11 @@ public class doOrder extends HttpServlet {
 		float shipping_cost = OrderUtils.calculateShipping(vendor, selectedItems);
 
 		OrderDAO orderDAO = new OrderDAO(connection);
-		orderDAO.createNewOrder(user.getId(), vendorID, shipping_cost, selectedItems);
+		try {
+			orderDAO.createOrder(user.getId(), vendorID, shipping_cost, selectedItems);
+		} catch (DatabaseException e) {
+			e.printStackTrace();
+		}
 
 		String path = getServletContext().getContextPath() + "/orders";
 		response.sendRedirect(path);
