@@ -8,10 +8,6 @@
 		<div class="animation">
 			Items in your cart <i class="fa fa-shopping-cart"></i>
 		</div>
-		<th:block th:if="${error != null}">
-			<div
-				th:replace="partials/error :: error(${error.title}, ${error.body})"></div>
-		</th:block>
 		<div th:each="cart : ${cart}"
 			th:with="vendor=${cart.key},itemselected=${cart.value}">
 			<div class="vendor-section card">
