@@ -6,12 +6,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import it.polimi.tiw.bigbang.beans.ExtendedItem;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
 import it.polimi.tiw.bigbang.beans.Vendor;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 
 public class ExtendedItemDAO {
 	private Connection connection;
@@ -34,8 +34,8 @@ public class ExtendedItemDAO {
 		Map<Integer, List<Price>> itemPrices = new LinkedHashMap<>();
 		PriceDAO priceDAO = new PriceDAO(connection);
 		try {
-			itemPrices = priceDAO.findManyByItemIDs(itemIDs);
-		} catch (SQLException e) {
+			itemPrices = priceDAO.findManyForEachItemId(itemIDs);
+		} catch (DatabaseException e) {
 			e.printStackTrace();
 		}
 		// for each item, for each price, find all the details of the vendor
@@ -51,8 +51,8 @@ public class ExtendedItemDAO {
 			List<Vendor> itemVendors = new ArrayList<>();
 			VendorDAO vendorDAO = new VendorDAO(connection);
 			try {
-				itemVendors = vendorDAO.findFullById(itemVendorIDs);
-			} catch (SQLException e) {
+				itemVendors = vendorDAO.findManyByVendorsId(itemVendorIDs);
+			} catch (DatabaseException e) {
 				e.printStackTrace();
 			}
 

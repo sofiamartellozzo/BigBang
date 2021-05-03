@@ -2,10 +2,7 @@ package it.polimi.tiw.bigbang.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -15,14 +12,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import it.polimi.tiw.bigbang.beans.ErrorMessage;
-import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.Price;
-import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.User;
-import it.polimi.tiw.bigbang.beans.Vendor;
-import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
-import it.polimi.tiw.bigbang.dao.VendorDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 
 public class doAddCart extends HttpServlet {
@@ -40,6 +33,20 @@ public class doAddCart extends HttpServlet {
 		response.getWriter().append("Served at: ").append(request.getContextPath());
 	}
 
+	/**
+	 * ERRORI GESTITI: 
+	 * -cartSession non presente nella sessione
+	 * -vendor null or vendor id <0
+	 * -item null or item id<0
+	 * -quantity <1
+	 * -non esiste una corrispondenza tra vendor e item
+	 * -decrementare l'item di un venditore non presente
+	 * -decremenetare l'item non presente
+	 * 
+	 * ERRORI DA GESTIRE:
+	 * - ho veramente passato un intero? 
+	 */
+	
 	@SuppressWarnings({ "unchecked", "unused" })
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -49,7 +56,7 @@ public class doAddCart extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 
 		// space for errors
-		ErrorMessage errorMessage = new ErrorMessage();
+		ErrorMessage errorMessage = null;
 
 		// Get items added to cart from session
 		HashMap<Integer, HashMap<Integer, Integer>> cartSession = new HashMap<Integer, HashMap<Integer, Integer>>();
@@ -57,9 +64,10 @@ public class doAddCart extends HttpServlet {
 			cartSession = (HashMap<Integer, HashMap<Integer, Integer>>) session.getAttribute("cartSession");
 		} catch (NumberFormatException | NullPointerException e) {
 
-			errorMessage.setErrorMessage("Resources not found");
+			errorMessage= new ErrorMessage("Session Error", "resources not found");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
 		}
 
 		/*
@@ -79,29 +87,37 @@ public class doAddCart extends HttpServlet {
 		Integer quantity = 1;
 		boolean decrement = false;
 
-		// controllo che ho veramente passato un intero?
-
+	
 		// Read variables from request
 
 		vendorAdd = Integer.parseInt(request.getParameter("vendorId"));
 		if (vendorAdd == null || vendorAdd < 0) {
 
-			errorMessage.setErrorMessage("Missing or empty credential value vendor");
+			errorMessage= new ErrorMessage("Vendor Parameter Error", "missing or empty credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
 		}
 
 		itemAdd = Integer.parseInt(request.getParameter("itemId"));
 		if (itemAdd == null || itemAdd < 0) {
 
-			errorMessage.setErrorMessage("Missing or empty credential value item");
+			errorMessage= new ErrorMessage("Item Parameter Error", "missing or empty credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
 		}
 
 		// Set if item is added from search or home pages
 		if (request.getParameter("quantity") != null) {
 			quantity = Integer.parseInt(request.getParameter("quantity"));
+			//only positive values
+		if(quantity<1) {
+			errorMessage= new ErrorMessage("Quantity Parameter Error", "negative quantity");
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
+		}
 		}
 
 		// Set if user wish decrement the number of items added to cart
@@ -113,8 +129,9 @@ public class doAddCart extends HttpServlet {
 		PriceDAO priceDAO = new PriceDAO(connection);
 		Price price = new Price();
 		try {
-			price = priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd);
-		} catch (SQLException e) {
+			price = priceDAO.findOneByItemIdAndVendorId(itemAdd, vendorAdd);
+		} catch (DatabaseException e) {
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
 			request.getSession().setAttribute("cartSession", cartSession);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
@@ -125,7 +142,14 @@ public class doAddCart extends HttpServlet {
 		if (cartSession.containsKey(vendorAdd)) {
 			vendorIsPresent = true;
 		}
-
+		
+		//If vendor is not present and decrement --> error
+		if(!vendorIsPresent && decrement){
+			errorMessage = new ErrorMessage("Request Error", "vendor not present in cart");
+			request.getSession().setAttribute("cartSession", cartSession);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
+		}
 		/*
 		 * Vendor selectedVendor = null; for (Vendor v : cart.keySet()) { if (v.getId()
 		 * == vendorAdd) { vendorIsPresent = true; selectedVendor = v; } }
@@ -150,6 +174,15 @@ public class doAddCart extends HttpServlet {
 			 * cart.get(selectedVendor)) { if (s.getItem().getId() == itemAdd) { isPresent =
 			 * true; selectedItem = s; } }
 			 */
+			
+			//item is not present and decrement
+			if (!isPresent && decrement) {
+				errorMessage = new ErrorMessage("Request Error", "item not present in cart");
+				request.getSession().setAttribute("cartSession", cartSession);
+				response.sendRedirect(getServletContext().getContextPath() + "/cart");
+				return;	
+			}
+			
 			if (!isPresent && !decrement) { // if not present create it
 
 				cartSession.get(vendorAdd).put(itemAdd, quantity);

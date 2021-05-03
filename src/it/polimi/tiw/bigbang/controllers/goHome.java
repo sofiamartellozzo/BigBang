@@ -23,6 +23,7 @@ import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.dao.ExtendedItemDAO;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 
 public class goHome extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -47,8 +48,8 @@ public class goHome extends HttpServlet {
 		ItemDAO itemDAO = new ItemDAO(connection);
 		List<Item> items = new ArrayList<>();
 		try {
-			items = itemDAO.findLastViewedItemsByUser(user.getId());
-		} catch (SQLException e) {
+			items = itemDAO.findLastViewedByUserId(user.getId());
+		} catch (DatabaseException e) {
 			e.printStackTrace();
 		}
 
@@ -56,8 +57,8 @@ public class goHome extends HttpServlet {
 			List<Item> fillerItems = new ArrayList<>();
 
 			try {
-				fillerItems = itemDAO.findNItemsByCategory("Books", 5);
-			} catch (SQLException e) {
+				fillerItems = itemDAO.findManyByCateogoryAndNumber("Books", 5);
+			} catch (DatabaseException e) {
 				e.printStackTrace();
 			}
 

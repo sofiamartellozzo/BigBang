@@ -9,6 +9,7 @@ import java.util.List;
 
 import it.polimi.tiw.bigbang.beans.ShippingRange;
 import it.polimi.tiw.bigbang.beans.Vendor;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 
 public class VendorDAO {
 	private Connection con;
@@ -17,27 +18,36 @@ public class VendorDAO {
 		this.con = connection;
 	}
 
-	public List<Vendor> findById(List<Integer> vendorIDs) throws SQLException {
+	/*
+	 * USELESS ?? 
+	 * 
+	 * public List<Vendor> findManyByVendorsId(List<Integer> vendorIDs) throws DatabaseException {
+	 
 		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
 		List<Vendor> vendors = new ArrayList<Vendor>();
+
 		for (Integer id : vendorIDs) {
-			PreparedStatement pStatementVendors = con.prepareStatement(vendorsQuery);
-			pStatementVendors.setInt(1, id);
-			ResultSet resultVendors = pStatementVendors.executeQuery();
-			if (resultVendors.isBeforeFirst()) {
-				resultVendors.next();
-				Vendor v = new Vendor();
-				v.setId(resultVendors.getInt("id"));
-				v.setName(resultVendors.getString("name"));
-				v.setScore(resultVendors.getInt("score"));
-				v.setFree_limit(resultVendors.getFloat("free_limit"));
-				vendors.add(v);
+			try (PreparedStatement pStatementVendors = con.prepareStatement(vendorsQuery)) {
+				pStatementVendors.setInt(1, id);
+				ResultSet resultVendors = pStatementVendors.executeQuery();
+				if (resultVendors.isBeforeFirst()) {
+					resultVendors.next();
+					Vendor v = new Vendor();
+					v.setId(resultVendors.getInt("id"));
+					v.setName(resultVendors.getString("name"));
+					v.setScore(resultVendors.getInt("score"));
+					v.setFree_limit(resultVendors.getFloat("free_limit"));
+					vendors.add(v);
+				}
+			} catch (SQLException e) {
+				throw new DatabaseException("resources not found");
 			}
 		}
 		return vendors;
 	}
+*/
 
-	public List<Vendor> findFullById(List<Integer> vendorIDs) throws SQLException {
+	public List<Vendor> findManyByVendorsId(List<Integer> vendorIDs) throws DatabaseException {
 		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
 		String shippingRangeQuery = "SELECT R.* FROM `range` R, shipping_policy SP WHERE R.id = SP.id_range AND SP.id_vendor = ?";
 		List<Vendor> vendors = new ArrayList<Vendor>();
@@ -72,12 +82,14 @@ public class VendorDAO {
 						vendors.add(v);
 					}
 				}
+			} catch (SQLException e) {
+				throw new DatabaseException("One or more vendor parameters have no match in database");
 			}
 		}
 		return vendors;
 	}
 
-	public Vendor findFullBySingleId(Integer vendorId) throws SQLException {
+	public Vendor fineOneByVendorId (Integer vendorId) throws DatabaseException {
 		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
 		String shippingRangeQuery = "SELECT R.* FROM `range` R, shipping_policy SP WHERE R.id = SP.id_range AND SP.id_vendor = ?";
 
@@ -111,6 +123,8 @@ public class VendorDAO {
 					return v;
 				}
 			}
+		} catch (SQLException e) {
+			throw new DatabaseException("Vendor parameters have no match in database");
 		}
 		return null;
 	}

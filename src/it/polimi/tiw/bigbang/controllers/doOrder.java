@@ -2,7 +2,6 @@ package it.polimi.tiw.bigbang.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,8 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.thymeleaf.TemplateEngine;
-
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.User;
@@ -25,20 +22,18 @@ import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.OrderDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.OrderUtils;
-import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 public class doOrder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
-	private TemplateEngine templateEngine;
 
 	@Override
 	public void init() throws ServletException {
 		ServletContext servletContext = getServletContext();
 		connection = DBConnectionProvider.getConnection(servletContext);
-		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
 	@Override
@@ -59,8 +54,8 @@ public class doOrder extends HttpServlet {
 		VendorDAO vendorDAO = new VendorDAO(connection);
 		Vendor vendor = new Vendor();
 		try {
-			vendor = vendorDAO.findFullBySingleId(vendorID);
-		} catch (SQLException e1) {
+			vendor = vendorDAO.fineOneByVendorId(vendorID);
+		} catch (DatabaseException e1) {
 			e1.printStackTrace();
 		}
 
@@ -71,8 +66,8 @@ public class doOrder extends HttpServlet {
 		ItemDAO itemDAO = new ItemDAO(connection);
 		List<Item> fullItems = new ArrayList<>();
 		try {
-			fullItems = itemDAO.findItemsById(new ArrayList<>(items.keySet()));
-		} catch (SQLException e1) {
+			fullItems = itemDAO.findManyByItemsId(new ArrayList<>(items.keySet()));
+		} catch (DatabaseException e1) {
 			e1.printStackTrace();
 		}
 
@@ -84,8 +79,8 @@ public class doOrder extends HttpServlet {
 			selectedItem.setItem(i);
 			selectedItem.setQuantity(items.get(i.getId()));
 			try {
-				selectedItem.setCost(priceDAO.findPriceBySingleItemId(i.getId(), vendorID).getPrice());
-			} catch (SQLException e) {
+				selectedItem.setCost(priceDAO.findOneByItemIdAndVendorId(i.getId(), vendorID).getPrice());
+			} catch (DatabaseException e) {
 				e.printStackTrace();
 			}
 			selectedItems.add(selectedItem);

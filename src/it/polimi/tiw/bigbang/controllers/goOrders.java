@@ -27,6 +27,7 @@ import it.polimi.tiw.bigbang.beans.Vendor;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.OrderDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -70,16 +71,16 @@ public class goOrders extends HttpServlet {
 		ItemDAO itemDAO = new ItemDAO(connection);
 		List<Item> itemDetails = new ArrayList<>();
 		try {
-			itemDetails = itemDAO.findItemsById(itemIDs);
-		} catch (SQLException e) {
+			itemDetails = itemDAO.findManyByItemsId(itemIDs);
+		} catch (DatabaseException e) {
 			e.printStackTrace();
 		}
 		
 		VendorDAO vendorDAO = new VendorDAO(connection);
 		List<Vendor> vendorDetails = new ArrayList<>();
 		try {
-			vendorDetails = vendorDAO.findById(vendorIDs);
-		} catch (SQLException e) {
+			vendorDetails = vendorDAO.findManyByVendorsId(vendorIDs);
+		} catch (DatabaseException e) {
 			e.printStackTrace();
 		}
 		

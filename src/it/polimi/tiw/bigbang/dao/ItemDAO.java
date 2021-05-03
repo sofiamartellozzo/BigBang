@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.polimi.tiw.bigbang.beans.Item;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 
 public class ItemDAO {
 	private Connection con;
@@ -15,40 +16,42 @@ public class ItemDAO {
 	public ItemDAO(Connection connection) {
 		this.con = connection;
 	}
-	
-	public Item findItemsBySingleId(int items) throws SQLException {
+
+	public Item findOneByItemId(int items) throws DatabaseException {
 
 		String query = "SELECT * FROM item WHERE id = ?";
-		
-			try (PreparedStatement pstatement = con.prepareStatement(query);) {
-				pstatement.setInt(1, items);
-				
-				try (ResultSet result = pstatement.executeQuery();) {
-					if (!result.isBeforeFirst()) // no results
-						return null;
-					else {
-						result.next();
-						Item item = new Item();
-						item.setId(result.getInt("id"));
-						item.setName(result.getString("name"));
-						item.setDescription(result.getString("description"));
-						item.setCategory(result.getString("category"));
-						item.setPicture(result.getString("picture"));
-						return item;
-						}
-					}
+
+		try (PreparedStatement pstatement = con.prepareStatement(query);) {
+			pstatement.setInt(1, items);
+
+			try (ResultSet result = pstatement.executeQuery();) {
+				if (!result.isBeforeFirst()) // no results
+					return null;
+				else {
+					result.next();
+					Item item = new Item();
+					item.setId(result.getInt("id"));
+					item.setName(result.getString("name"));
+					item.setDescription(result.getString("description"));
+					item.setCategory(result.getString("category"));
+					item.setPicture(result.getString("picture"));
+					return item;
 				}
+			}
+		} catch (SQLException e) {
+			throw new DatabaseException("Item not present in database");
+		}
 	}
 
-	public List<Item> findItemsById(ArrayList<Integer> items) throws SQLException {
+	public List<Item> findManyByItemsId(ArrayList<Integer> items) throws DatabaseException {
 
 		String query = "SELECT * FROM item WHERE id = ?";
 		List<Item> cartItems = new ArrayList<Item>();
-		
-		for(Integer i: items) {
+
+		for (Integer i : items) {
 			try (PreparedStatement pstatement = con.prepareStatement(query);) {
 				pstatement.setInt(1, i);
-				
+
 				try (ResultSet result = pstatement.executeQuery();) {
 					if (!result.isBeforeFirst()) // no results
 						return null;
@@ -61,14 +64,16 @@ public class ItemDAO {
 						item.setCategory(result.getString("category"));
 						item.setPicture(result.getString("picture"));
 						cartItems.add(item);
-						}
 					}
 				}
+			} catch (SQLException e) {
+				throw new DatabaseException("One or more item requested not present in database");
+			}
 		}
 		return cartItems;
 	}
 
-	public List<Item> findLastViewedItemsByUser(int userID) throws SQLException {
+	public List<Item> findLastViewedByUserId(int userID) throws DatabaseException {
 
 		String query = "SELECT I.* FROM item AS I, view as V WHERE I.id = V.id_item AND V.id_user = ? GROUP BY V.id_item ORDER BY max(V.date) DESC LIMIT 5";
 
@@ -89,14 +94,16 @@ public class ItemDAO {
 								setPicture(result.getString("picture"));
 							}
 						};
-						viewedItems.add(item);					
+						viewedItems.add(item);
 					}
 			}
+		} catch (SQLException e) {
+			throw new DatabaseException("Resource not found");
 		}
 		return viewedItems;
 	}
 
-	public List<Item> findNItemsByCategory(String category, int number) throws SQLException {
+	public List<Item> findManyByCateogoryAndNumber(String category, int number) throws DatabaseException {
 
 		String query = "SELECT * FROM item WHERE category = ? LIMIT ?";
 
@@ -121,12 +128,14 @@ public class ItemDAO {
 						viewedItems.add(item);
 					}
 			}
+		} catch (SQLException e) {
+			throw new DatabaseException("No items for the specified category and limit");
 		}
 
 		return viewedItems;
 	}
 
-	public List<Item> findItemsByWord(String research) throws SQLException {
+	public List<Item> findManyByWord(String research) throws DatabaseException {
 		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%', ?, '%') OR description LIKE  concat('%', ?, '%') OR category LIKE  concat('%', ?, '%') ";
 		List<Item> searchItems = new ArrayList<Item>();
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
@@ -147,8 +156,9 @@ public class ItemDAO {
 
 				}
 			}
+		} catch (SQLException e) {
+			throw new DatabaseException("No corrispondece for the word requested");
 		}
-
 		return searchItems;
 	}
 

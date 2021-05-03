@@ -21,6 +21,7 @@ import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.dao.ExtendedItemDAO;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
@@ -82,12 +83,12 @@ public class doSearch extends HttpServlet {
 		List<Item> searchItems = new ArrayList<>();
 		finalItemSearch = new ArrayList<>();
 		try {
-			searchItems = itemDAO.findItemsByWord(itemSearch);
+			searchItems = itemDAO.findManyByWord(itemSearch);
 			finalItemSearch = extendedItemDAO.findAllItemDetails(searchItems);
 			
 			//put the search items in the session, so they now can be find by doView when redirect to search page
 			request.getSession().setAttribute("itemSearch", finalItemSearch);
-		} catch (SQLException e) {
+		} catch (DatabaseException e) {
 			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Not Possible to find items");
 			e.printStackTrace();
 			return;

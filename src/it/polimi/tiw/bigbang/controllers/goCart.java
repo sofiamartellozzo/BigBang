@@ -27,6 +27,7 @@ import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.PriceDAO;
 import it.polimi.tiw.bigbang.dao.VendorDAO;
+import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
 import it.polimi.tiw.bigbang.utils.OrderUtils;
 import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
@@ -43,6 +44,14 @@ public class goCart extends HttpServlet {
 		templateEngine = TemplateEngineProvider.getTemplateEngine(servletContext);
 	}
 
+	
+	/**
+	 * ERRORI GESTITI: 
+	 * -errore propagato da doAddCart
+	 * -cartSession non presente nella sessione
+	 * -errori di interrogazioni al db
+	 */
+	
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -50,7 +59,7 @@ public class goCart extends HttpServlet {
 		// get active user
 		HttpSession session = request.getSession();
 		User user = (User) session.getAttribute("user");
-
+		
 		// space for errors
 		ErrorMessage errorMessage;
 		errorMessage = (ErrorMessage) session.getAttribute("error");
@@ -61,15 +70,22 @@ public class goCart extends HttpServlet {
 
 		//error added to session from doAddCart
 		if (errorMessage != null) {
+			
+			//rebuilt old cart and shipping
+			cart = (HashMap<Vendor, List<SelectedItem>>) session.getAttribute("cartOld");
+			shipping = (HashMap<Vendor, float[]>) session.getAttribute("shippingOld");
+			
 			String path = "cart";
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 			webContext.setVariable("cart", cart);
 			webContext.setVariable("shipping", shipping);
 			webContext.setVariable("user", user);
+			webContext.setVariable("error", errorMessage);
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
+			
 		}else {
-			errorMessage=new ErrorMessage();
+			errorMessage=null;
 		}
 
 		// Get items added to cart from session
@@ -78,10 +94,19 @@ public class goCart extends HttpServlet {
 			cartSession = (HashMap<Integer, HashMap<Integer, Integer>>) session.getAttribute("cartSession");
 		} catch (NumberFormatException | NullPointerException e) {
 
-			errorMessage.setErrorMessage("Resources not found");
+			errorMessage= new ErrorMessage("Session Error", "resources not found");
+			String path = "cart";
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("cart", cart);
+			webContext.setVariable("shipping", shipping);
+			webContext.setVariable("user", user);
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
 		}
 
 		if (cartSession.isEmpty()) {
+			
 			String path = "cart";
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 			webContext.setVariable("cart", cart);
@@ -101,9 +126,17 @@ public class goCart extends HttpServlet {
 			Vendor vendorCurrent = new Vendor();
 			try {
 
-				vendorCurrent = vendorDAO.findFullBySingleId(vendor);
-			} catch (SQLException e) {
-				errorMessage.setErrorMessage("Vendor not found");
+				vendorCurrent = vendorDAO.fineOneByVendorId(vendor);
+			} catch (DatabaseException e) {
+				errorMessage = new ErrorMessage("Database Error", e.getBody());
+				String path = "cart";
+				final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+				webContext.setVariable("cart", cart);
+				webContext.setVariable("shipping", shipping);
+				webContext.setVariable("user", user);
+				webContext.setVariable("error", errorMessage);
+				templateEngine.process(path, webContext, response.getWriter());
+				return;	
 			}
 
 			Set<Integer> itemsForVendorSet = cartSession.get(vendor).keySet();
@@ -115,18 +148,34 @@ public class goCart extends HttpServlet {
 				ItemDAO itemDAO = new ItemDAO(connection);
 				Item itemCurrent = new Item();
 				try {
-					itemCurrent = itemDAO.findItemsBySingleId(item);
-				} catch (SQLException e) {
-					errorMessage.setErrorMessage("Item not found");
+					itemCurrent = itemDAO.findOneByItemId(item);
+				} catch (DatabaseException e) {
+					errorMessage = new ErrorMessage("Database Error", e.getBody());
+					String path = "cart";
+					final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+					webContext.setVariable("cart", cart);
+					webContext.setVariable("shipping", shipping);
+					webContext.setVariable("user", user);
+					webContext.setVariable("error", errorMessage);
+					templateEngine.process(path, webContext, response.getWriter());
+					return;	
 				}
 
 				// collect price
 				PriceDAO priceDAO = new PriceDAO(connection);
 				Price price = new Price();
 				try {
-					price = priceDAO.findPriceBySingleItemId(item, vendor);
-				} catch (SQLException e) {
-					errorMessage.setErrorMessage("Item informations not found");
+					price = priceDAO.findOneByItemIdAndVendorId(item, vendor);
+				} catch (DatabaseException e) {
+					errorMessage = new ErrorMessage("Database Error", e.getBody());
+					String path = "cart";
+					final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+					webContext.setVariable("cart", cart);
+					webContext.setVariable("shipping", shipping);
+					webContext.setVariable("user", user);
+					webContext.setVariable("error", errorMessage);
+					templateEngine.process(path, webContext, response.getWriter());
+					return;	
 				}
 
 				SelectedItem selectedItem = new SelectedItem();
@@ -167,7 +216,11 @@ public class goCart extends HttpServlet {
 
 		String path = "cart";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
-
+		
+		//necessary just for manage errors
+		request.getSession().setAttribute("cartOld", cart);
+		request.getSession().setAttribute("shippingOld", shipping);
+		
 		webContext.setVariable("error", errorMessage);
 		webContext.setVariable("cart", cart);
 		webContext.setVariable("shipping", shipping);
