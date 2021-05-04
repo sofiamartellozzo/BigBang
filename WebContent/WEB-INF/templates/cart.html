@@ -12,7 +12,7 @@
 			th:with="vendor=${cart.key},itemselected=${cart.value}">
 			<div class="vendor-section card">
 				<div class="vendor-head">
-					<div class="vendor-name">[[${vendor.name}]]</div>
+					<div class="vendor-name" th:text="${vendor.name}">Vendor name</div>
 					<div class="vendor-rate">
 						<th:block th:each="i : ${#numbers.sequence(0, vendor.score - 1)}">
 							<span class="fa fa-star checked"></span>
@@ -32,7 +32,7 @@
 						<td>
 							<div class="prices-setting-bis">
 								<div
-									th:text="${#numbers.formatDecimal(entry.cost, 1, 'COMMA', 2, 'POINT')}"></div>
+									th:text="${#numbers.formatDecimal(entry.cost, 1, 'COMMA', 2, 'POINT')}">10.00</div>
 								<div class="single-price-setting">&euro;/cad.</div>
 							</div>
 						</td>
@@ -54,7 +54,7 @@
 						<td>
 							<div class="prices-setting">
 								<div class="item-amount"
-									th:text="${#numbers.formatDecimal(entry.cost*entry.quantity, 1, 'COMMA', 2, 'POINT')}"></div>
+									th:text="${#numbers.formatDecimal(entry.cost*entry.quantity, 1, 'COMMA', 2, 'POINT')}">30.00</div>
 								<span>&euro;</span>
 							</div>
 						</td>
@@ -73,7 +73,7 @@
 								<div th:if="${vendor2.id == vendor.id}">
 									<div class="prices-setting">
 										<div
-											th:text="${#numbers.formatDecimal(costs[1], 1, 'COMMA', 2, 'POINT')}"></div>
+											th:text="${#numbers.formatDecimal(costs[1], 1, 'COMMA', 2, 'POINT')}">30.00</div>
 										<span>&euro;</span>
 									</div>
 								</div>
@@ -85,7 +85,7 @@
 								<div th:if="${vendor2.id == vendor.id}">
 									<div class="prices-setting">
 										<div
-											th:text="${#numbers.formatDecimal(costs[0], 1, 'COMMA', 2, 'POINT')}"></div>
+											th:text="${#numbers.formatDecimal(costs[0], 1, 'COMMA', 2, 'POINT')}">3.00</div>
 										<span>&euro;</span>
 									</div>
 								</div>
@@ -97,7 +97,7 @@
 								<div th:if="${vendor2.id == vendor.id}">
 									<div class="prices-setting">
 										<div
-											th:text="${#numbers.formatDecimal(costs[2], 1, 'COMMA', 2, 'POINT')}"></div>
+											th:text="${#numbers.formatDecimal(costs[2], 1, 'COMMA', 2, 'POINT')}">33.00</div>
 										<span>&euro;</span>
 									</div>
 								</div>

@@ -83,7 +83,7 @@ public class VendorDAO {
 					}
 				}
 			} catch (SQLException e) {
-				throw new DatabaseException("One or more vendor parameters have no match in database");
+				throw new DatabaseException("The server wasn't able to find the requested vendors in database");
 			}
 		}
 		return vendors;
@@ -124,7 +124,7 @@ public class VendorDAO {
 				}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("Vendor parameters have no match in database");
+			throw new DatabaseException("The server wasn't able to find the requested vendor in database");
 		}
 		return null;
 	}

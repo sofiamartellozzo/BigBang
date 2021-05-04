@@ -48,7 +48,7 @@ public class goCart extends HttpServlet {
 	/**
 	 * ERRORI GESTITI: 
 	 * -errore propagato da doAddCart
-	 * -cartSession non presente nella sessione
+	 * -cartSession non presente nella sessione --> print empty cart 
 	 * -errori di interrogazioni al db
 	 */
 	
@@ -76,6 +76,7 @@ public class goCart extends HttpServlet {
 			shipping = (HashMap<Vendor, float[]>) session.getAttribute("shippingOld");
 			
 			String path = "cart";
+			request.getSession().setAttribute("error", null);
 			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 			webContext.setVariable("cart", cart);
 			webContext.setVariable("shipping", shipping);

@@ -2,7 +2,6 @@ package it.polimi.tiw.bigbang.controllers;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,17 +12,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.valves.ErrorReportValve;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
-import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
-import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.View;
 import it.polimi.tiw.bigbang.dao.ViewDAO;
 import it.polimi.tiw.bigbang.exceptions.DatabaseException;
+import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
+import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 
 public class doView extends HttpServlet {

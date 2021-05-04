@@ -39,7 +39,7 @@ public class PriceDAO {
 
 				}
 			}catch (SQLException e) {
-				throw new DatabaseException("One or more item parameters have no match in database");
+				throw new DatabaseException("The server wasn't able to detect requested items in database");
 			}
 		}
 		return prices;
@@ -65,7 +65,7 @@ public class PriceDAO {
 				}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("Item parameters have no match in database");
+			throw new DatabaseException("The server wasn't able to detect requested item in database");
 		}
 	}
 
@@ -115,7 +115,7 @@ public class PriceDAO {
 					}
 				}
 			}catch (SQLException e) {
-				throw new DatabaseException("One or more item have no corrispondence in database");
+				throw new DatabaseException("The server wasn't able to detect requested items in database");
 			}
 
 			Comparator<Price> comparePrice = new Comparator<Price>() {

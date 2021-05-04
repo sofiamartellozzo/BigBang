@@ -39,7 +39,7 @@ public class ItemDAO {
 				}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("Item not present in database");
+			throw new DatabaseException("The server wasn't able to find the requested item in database.");
 		}
 	}
 
@@ -67,7 +67,7 @@ public class ItemDAO {
 					}
 				}
 			} catch (SQLException e) {
-				throw new DatabaseException("One or more item requested not present in database");
+				throw new DatabaseException("The server wasn't able to find the requested items in database.");
 			}
 		}
 		return cartItems;
@@ -98,7 +98,7 @@ public class ItemDAO {
 					}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("Resource not found");
+			throw new DatabaseException("The server wasn't able to find the requested item in database.");
 		}
 		return viewedItems;
 	}
@@ -129,7 +129,7 @@ public class ItemDAO {
 					}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("No items for the specified category and limit");
+			throw new DatabaseException("The server wasn't able to find items for the category specified in database");
 		}
 
 		return viewedItems;
@@ -157,7 +157,7 @@ public class ItemDAO {
 				}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("No corrispondece for the word requested");
+			throw new DatabaseException("The server wasn't able to find items for the specified word in database");
 		}
 		return searchItems;
 	}
