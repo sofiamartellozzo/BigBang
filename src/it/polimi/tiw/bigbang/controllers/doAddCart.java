@@ -34,23 +34,17 @@ public class doAddCart extends HttpServlet {
 	}
 
 	/**
-	 * ERRORI GESTITI: 
-	 * -cartSession non presente nella sessione 
-	 * -vendor null or vendor id <0 
-	 * -item null or item id<0
-	 * -non esiste una corrispondenza tra vendor e item 
-	 * -decrementare l'item di un venditore non presente 
-	 * -decremenetare l'item non presente 
-	 * -ho veramente passato un intero
-	 * -quantity <=0
-	 * -non passo a sub il valore corretto
+	 * ERRORI GESTITI: -cartSession non presente nella sessione -vendor null or
+	 * vendor id <0 -item null or item id<0 -non esiste una corrispondenza tra
+	 * vendor e item -decrementare l'item di un venditore non presente
+	 * -decremenetare l'item non presente -ho veramente passato un intero -quantity
+	 * <=0 -non passo a sub il valore corretto
 	 * 
-	 * ERRORI DA GESTIRE:
-	 * -se metto sub dove dovrei invece incrementare?? 
+	 * ERRORI DA GESTIRE: -se metto sub dove dovrei invece incrementare??
 	 * 
 	 */
 
-	@SuppressWarnings({ "unchecked", "unused"})
+	@SuppressWarnings({ "unchecked", "unused" })
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -67,7 +61,7 @@ public class doAddCart extends HttpServlet {
 			cartSession = (HashMap<Integer, HashMap<Integer, Integer>>) session.getAttribute("cartSession");
 		} catch (NumberFormatException | NullPointerException e) {
 
-			errorMessage= new ErrorMessage("Session Error", "resources not found");
+			errorMessage = new ErrorMessage("Session Error", "resources not found");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
@@ -90,85 +84,86 @@ public class doAddCart extends HttpServlet {
 		Integer quantity = 1;
 		boolean decrement = false;
 
-	
 		// Read variables from request
 
-		String id = request.getParameter("vendorId");
-		if(id != null && !id.equals("")) {
-		      try {
-		        vendorAdd = Integer.parseInt(id);
-		      }catch(NumberFormatException e) {
-		    	  errorMessage= new ErrorMessage("Vendor Parameter Error", "not corret format of credential value");
-					request.getSession().setAttribute("error", errorMessage);
-					response.sendRedirect(getServletContext().getContextPath() + "/cart");
-					return;
-		      }
-		}else {
-			errorMessage= new ErrorMessage("Vendor Parameter Error", "not corret format of credential value");
+		String string_vendor = request.getParameter("vendorId");
+		if (string_vendor != null && !string_vendor.equals("")) {
+			try {
+				vendorAdd = Integer.parseInt(string_vendor);
+			} catch (NumberFormatException e) {
+				errorMessage = new ErrorMessage("Vendor Parameter Error", "not corret format of credential value");
+				request.getSession().setAttribute("error", errorMessage);
+				response.sendRedirect(getServletContext().getContextPath() + "/cart");
+				return;
+			}
+		} else {
+			errorMessage = new ErrorMessage("Vendor Parameter Error", "not corret format of credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
 		if (vendorAdd == null || vendorAdd < 0) {
 
-			errorMessage= new ErrorMessage("Vendor Parameter Error", "missing or empty credential value");
+			errorMessage = new ErrorMessage("Vendor Parameter Error", "missing or empty credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
 
-	
-		id = request.getParameter("itemId");
-		if(id != null && !id.equals("")) {
-		      try {
-		        itemAdd = Integer.parseInt(id);
-		        
-		      }catch(NumberFormatException e) {
-		    	  errorMessage= new ErrorMessage("Item Parameter Error", "not corret format of credential value");
-					request.getSession().setAttribute("error", errorMessage);
-					response.sendRedirect(getServletContext().getContextPath() + "/cart");
-					return;
-		      }
-		}
-		else {
-			errorMessage= new ErrorMessage("Item Parameter Error", "not corret format of credential value");
+		String string_item = request.getParameter("itemId");
+		if (string_item != null && !string_item.equals("")) {
+			try {
+				itemAdd = Integer.parseInt(string_item);
+
+			} catch (NumberFormatException e) {
+				errorMessage = new ErrorMessage("Item Parameter Error", "not corret format of credential value");
+				request.getSession().setAttribute("error", errorMessage);
+				response.sendRedirect(getServletContext().getContextPath() + "/cart");
+				return;
+			}
+		} else {
+			errorMessage = new ErrorMessage("Item Parameter Error", "not corret format of credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
 		if (itemAdd == null || itemAdd < 0) {
 
-			errorMessage= new ErrorMessage("Item Parameter Error", "missing or empty credential value");
+			errorMessage = new ErrorMessage("Item Parameter Error", "missing or empty credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
 
 		// Set if item is added from search or home pages
-		id = request.getParameter("quantity");
-		if(id != null && !id.equals("")) {
-		      try {
-		        quantity = Integer.parseInt(id);
-		      }catch(NumberFormatException e) {
-		    	  errorMessage= new ErrorMessage("Quantity Parameter Error", "not corret format of credential value");
-					request.getSession().setAttribute("error", errorMessage);
-					response.sendRedirect(getServletContext().getContextPath() + "/cart");
-					return;
-		      }
-		}else {
-			 errorMessage= new ErrorMessage("Quantity Parameter Error", "not corret format of credential value");
+		String string_quantity = request.getParameter("quantity");
+		if (string_quantity != null && !string_quantity.equals("")) {
+			try {
+				quantity = Integer.parseInt(string_quantity);
+			} catch (NumberFormatException e) {
+				errorMessage = new ErrorMessage("Quantity Parameter Error", "not corret format of credential value");
 				request.getSession().setAttribute("error", errorMessage);
 				response.sendRedirect(getServletContext().getContextPath() + "/cart");
 				return;
-		}
-			//only positive values
-		if(quantity<1) {
-			errorMessage= new ErrorMessage("Quantity Parameter Error", "negative quantity");
+			}
+			/*
+		} else {
+			errorMessage = new ErrorMessage("Quantity Parameter Error 2 ", "not corret format of credential value");
 			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
+			*/
 		}
-		
+		// only positive values
+		if (quantity != null && !quantity.equals("")) {
+			if (quantity < 1) {
+				errorMessage = new ErrorMessage("Quantity Parameter Error", "negative quantity");
+				request.getSession().setAttribute("error", errorMessage);
+				response.sendRedirect(getServletContext().getContextPath() + "/cart");
+				return;
+			}
+		}
+
 		// Set if user wish decrement the number of items added to cart
 		if (request.getParameter("sub") != null && request.getParameter("sub").equals("true")) {
 			decrement = true;
@@ -191,9 +186,9 @@ public class doAddCart extends HttpServlet {
 		if (cartSession.containsKey(vendorAdd)) {
 			vendorIsPresent = true;
 		}
-		
-		//If vendor is not present and decrement --> error
-		if(!vendorIsPresent && decrement){
+
+		// If vendor is not present and decrement --> error
+		if (!vendorIsPresent && decrement) {
 			errorMessage = new ErrorMessage("Request Error", "vendor not present in cart");
 			request.getSession().setAttribute("cartSession", cartSession);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
@@ -204,7 +199,7 @@ public class doAddCart extends HttpServlet {
 		 * == vendorAdd) { vendorIsPresent = true; selectedVendor = v; } }
 		 */
 
-		if (!vendorIsPresent && !decrement) //vendor is not present
+		if (!vendorIsPresent && !decrement) // vendor is not present
 		{
 			HashMap<Integer, Integer> itemQuantity = new HashMap<Integer, Integer>();
 			itemQuantity.put(itemAdd, quantity);
@@ -223,15 +218,15 @@ public class doAddCart extends HttpServlet {
 			 * cart.get(selectedVendor)) { if (s.getItem().getId() == itemAdd) { isPresent =
 			 * true; selectedItem = s; } }
 			 */
-			
-			//item is not present and decrement
+
+			// item is not present and decrement
 			if (!isPresent && decrement) {
 				errorMessage = new ErrorMessage("Request Error", "item not present in cart");
 				request.getSession().setAttribute("cartSession", cartSession);
 				response.sendRedirect(getServletContext().getContextPath() + "/cart");
-				return;	
+				return;
 			}
-			
+
 			if (!isPresent && !decrement) { // if not present create it
 
 				cartSession.get(vendorAdd).put(itemAdd, quantity);
