@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -136,6 +137,20 @@ public class doSearch extends HttpServlet {
 		//set it true so each new search clear the attributes
 		//session.setAttribute("clearViewItemList", true);
 		session.removeAttribute("clearViewItemList");
+		
+		//how many items sold by a specific vendor are in user cart
+				HashMap<Integer,Integer> itemsSoldByVendor = new HashMap<>();
+
+				@SuppressWarnings("unchecked")
+				HashMap<Integer, HashMap<Integer, Integer>> cart = (HashMap<Integer, HashMap<Integer, Integer>>) session.getAttribute("cartSession");
+				for(Integer vendor: cart.keySet()){
+					int totalItems = 0;
+					for(int item : cart.get(vendor).keySet()){
+						totalItems= cart.get(vendor).get(item);
+					}
+					itemsSoldByVendor.put(vendor,totalItems);
+				}
+
 
 		// Redirect to the search Page with the items found
 		String path = "search";
@@ -145,6 +160,7 @@ public class doSearch extends HttpServlet {
 		webContext.setVariable("searchItem", extendedItemSearch);
 		webContext.setVariable("user", user);
 		webContext.setVariable("keyword", wordSearched);
+		webContext.setVariable("cartInformations", itemsSoldByVendor);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 	

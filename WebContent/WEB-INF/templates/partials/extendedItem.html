@@ -48,8 +48,10 @@
             </span>
           </p>
           <p>
-            <strong><span th:text="3">3</span> items</strong> in your cart are
-            sold by this vendor.
+            <span th:each="cartInformations : ${cartInformations}"
+								th:with="vendorCart=${cartInformations.key},quantity=${cartInformations.value}">
+								<span th:if="${vendorCart == vendor.id}"><strong><span th:text="${quantity}">3</span> items</strong> in your cart are
+            sold by this vendor.</span></span>
           </p>
           <br />
           <h4>Shipping cost</h4>

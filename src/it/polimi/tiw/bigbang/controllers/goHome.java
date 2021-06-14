@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -27,7 +28,7 @@ import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 
 public class goHome extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private TemplateEngine templateEngine;
 	private Connection connection;
 	private ServletContext servletContext;
@@ -77,19 +78,33 @@ public class goHome extends HttpServlet {
 					break;
 			}
 		}
-		
+
 		List<ExtendedItem> extendedItems = new ArrayList<>();
 		ExtendedItemDAO extendedItemDAO = new ExtendedItemDAO(connection);
-		
+
 		extendedItems = extendedItemDAO.findManyItemsDetailsByItemsId(items);
+
+		//how many items sold by a specific vendor are in user cart
+		HashMap<Integer,Integer> itemsSoldByVendor = new HashMap<>();
+
+		@SuppressWarnings("unchecked")
+		HashMap<Integer, HashMap<Integer, Integer>> cart = (HashMap<Integer, HashMap<Integer, Integer>>) session.getAttribute("cartSession");
+		for(Integer vendor: cart.keySet()){
+			int totalItems = 0;
+			for(int item : cart.get(vendor).keySet()){
+				totalItems= cart.get(vendor).get(item);
+			}
+			itemsSoldByVendor.put(vendor,totalItems);
+		}
 
 		String path = "home";
 		final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
 		webContext.setVariable("lastViewedItems", extendedItems);
 		webContext.setVariable("user", user);
+		webContext.setVariable("cartInformations", itemsSoldByVendor);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
-	
+
 	public void destroy() {
 		try {
 			DBConnectionProvider.closeConnection(connection);
