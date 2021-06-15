@@ -146,7 +146,7 @@ public class doSearch extends HttpServlet {
 				for(Integer vendor: cart.keySet()){
 					int totalItems = 0;
 					for(int item : cart.get(vendor).keySet()){
-						totalItems= cart.get(vendor).get(item);
+						totalItems= totalItems + cart.get(vendor).get(item);
 					}
 					itemsSoldByVendor.put(vendor,totalItems);
 				}
