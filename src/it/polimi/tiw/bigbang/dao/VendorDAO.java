@@ -90,7 +90,7 @@ public class VendorDAO {
 	}
 
 	public Vendor fineOneByVendorId (Integer vendorId) throws DatabaseException {
-		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ?";
+		String vendorsQuery = "SELECT id, name, score, free_limit FROM vendor WHERE id = ? ORDER BY name";
 		String shippingRangeQuery = "SELECT R.* FROM `range` R, shipping_policy SP WHERE R.id = SP.id_range AND SP.id_vendor = ?";
 
 		try (PreparedStatement pStatementVendors = con.prepareStatement(vendorsQuery);) {
