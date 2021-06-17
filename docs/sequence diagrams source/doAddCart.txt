@@ -1,0 +1,48 @@
+title Request to add an item to the cart
+
+participant doAddCart
+participant session
+participant priceDAO
+participant goCart
+activate doAddCart
+
+[->doAddCart: doPost\n? vendorId= & itemId= \n(& quantity= ) (& sub=true)
+note left of doAddCart#lightgreen: doPost request parameter: \n**quantity** refers to the quantity of items\nI want to add/remove from the cart. If not specified it is set to one.\n\n**sub** refers to the user's choice to add or remove items.\nIf not present, it means that the quantity have to be added
+activate session
+doAddCart->session:getAttribute("user")
+session-->doAddCart: User //user
+doAddCart->session:getAttribute("cartSession")
+session-->doAddCart:HashMap<Integer,HashMap<Integer,Integer>> //cartSession
+deactivate session
+note left of doAddCart#lightgreen://HashMap<Integer,HashMap<Integer,Integer>>\n\n            [ VendorId, [ ItemId, Quantity ] ]
+activate priceDAO
+doAddCart->priceDAO: findOneByItemIdAndVendorId("item","vendor")
+note left of doAddCart#lightgreen:check if there really is a match between vendor and item
+doAddCart<--priceDAO:Price price
+deactivate priceDAO
+alt Vendor not present in the cart yet
+doAddCart->doAddCart:             add Vendor add Item
+else Vendor is present but item is missing 
+doAddCart->doAddCart:             add Item
+else Vendor and Item are already present 
+alt Add
+doAddCart->doAddCart:             increment quantity
+else Remove
+doAddCart->doAddCart:             decremen quantity
+end 
+end 
+activate session
+doAddCart->session:setAttribute("cartSession",cartSession)
+deactivate session
+activate goCart
+doAddCart->goCart:sendRedirect()
+goCart->]:doGet
+alt#red if one of the possible errors occurs
+doAddCart->doAddCart: create new Error Message
+activate session
+doAddCart->session:setAttribute("error",errorMessage)
+deactivate session
+
+doAddCart->goCart:sendRedirect()
+goCart->]:doGet
+end 
