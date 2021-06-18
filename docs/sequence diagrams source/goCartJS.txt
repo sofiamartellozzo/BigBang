@@ -1,0 +1,60 @@
+title Request to view the cart
+
+participantgroup #orange **Client**
+participant Client window
+end
+participantgroup #lightblue **Server**
+participant goCart
+participant session
+participant vendorDAO
+participant itemDAO
+participant priceDAO
+participant OtherUtils
+end
+activate Client window
+
+[->Client window: goCart
+activate goCart
+Client window->goCart: doGet
+activate session
+goCart->session:getAttribute("user")
+session-->goCart: User //user
+goCart-#red>session:<color:#red>getAttribute("error")
+session--#red>goCart: <color:#red>ErrorMessage //error
+goCart->session:getAttribute("cartSession")
+session-->goCart:HashMap<Integer,HashMap<Integer,Integer>> //cartSession
+deactivate session
+note right of goCart#lightgreen://HashMap<Integer,HashMap<Integer,Integer>>\n\n            [ VendorId, [ ItemId, Quantity ] ]
+loop For each vendor in cartSession
+activate vendorDAO
+goCart->vendorDAO:fineOneByVendorId("vendorId")
+vendorDAO-->goCart: Vendor vendor
+deactivate vendorDAO
+loop For each item added to cart sold by the vendor
+activate itemDAO
+goCart->itemDAO: findOneByItemId("itemId")
+itemDAO-->goCart: Item item
+deactivate itemDAO
+activate priceDAO
+goCart->priceDAO:findOneByItemIdAndVendorId("itemId","vendorId")
+priceDAO-->goCart: Price price
+deactivate priceDAO
+end 
+activate OtherUtils
+goCart->OtherUtils:calculateShipping("vendor","items")
+OtherUtils-->goCart: float shippingPrice
+deactivate OtherUtils
+end 
+
+
+alt#red If the servlet doAddCart encountered an error or goCart finds it
+activate session
+goCart->session:getAttribute("cartOld")
+session-->goCart: HashMap<Vendor,List<SelectedItem>> cart
+goCart->session:getAttribute("shippingOld")
+session-->goCart:HashMap<Vendor, float[]> shipping 
+deactivate session
+goCart->Client window: String errorMessage
+end 
+goCart->Client window: cartJson
+Client window->Client window: buildCart
