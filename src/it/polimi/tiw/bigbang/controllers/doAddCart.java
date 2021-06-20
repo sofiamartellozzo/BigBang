@@ -34,17 +34,22 @@ public class doAddCart extends HttpServlet {
 	}
 
 	/**
-	 * ERRORI GESTITI: -cartSession non presente nella sessione -vendor null or
-	 * vendor id <0 -item null or item id<0 -non esiste una corrispondenza tra
-	 * vendor e item -decrementare l'item di un venditore non presente
-	 * -decremenetare l'item non presente -ho veramente passato un intero -quantity
-	 * <=0 -non passo a sub il valore corretto
+	 * ERRORI GESTITI: 
+	 * -cartSession non presente nella sessione 
+	 * -vendor null or vendor id <0 
+	 * -item null or item id<0 
+	 * -non esiste una corrispondenza tra vendor e item 
+	 * -decrementare l'item di un venditore non presente
+	 * -decremenetare l'item non presente 
+	 * -ho veramente passato un intero 
+	 * -quantity <=0 
+	 * -non passo a sub il valore corretto
 	 * 
 	 * ERRORI DA GESTIRE: -se metto sub dove dovrei invece incrementare??
 	 * 
 	 */
 
-	@SuppressWarnings({ "unchecked", "unused" })
+	@SuppressWarnings({ "unchecked", "unused", "unlikely-arg-type" })
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -67,22 +72,19 @@ public class doAddCart extends HttpServlet {
 			return;
 		}
 
-		/*
-		 * // Get items added to cart HashMap<Vendor, List<SelectedItem>> cart = new
-		 * HashMap<Vendor, List<SelectedItem>>();
-		 * 
-		 * try { cart = (HashMap<Vendor, List<SelectedItem>>)
-		 * session.getAttribute("cart"); } catch (NumberFormatException |
-		 * NullPointerException e) {
-		 * response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
-		 * return; }
-		 */
-
+		//Initialization of some variables useful for build cart
+		
+		//current vendor id
 		Integer vendorAdd = 0;
+		
+		//increment or decrement 
 		String sub = null;
-		Integer itemAdd = 0;
-		Integer quantity = 1;
 		boolean decrement = false;
+		
+		//current item id
+		Integer itemAdd = 0;
+		
+		Integer quantity = 1;
 
 		// Read variables from request
 
@@ -135,7 +137,7 @@ public class doAddCart extends HttpServlet {
 			return;
 		}
 
-		// Set if item is added from search or home pages
+		//Present only if item is added from search or home page
 		String string_quantity = request.getParameter("quantity");
 		if (string_quantity != null && !string_quantity.equals("")) {
 			try {
@@ -146,15 +148,9 @@ public class doAddCart extends HttpServlet {
 				response.sendRedirect(getServletContext().getContextPath() + "/cart");
 				return;
 			}
-			/*
-		} else {
-			errorMessage = new ErrorMessage("Quantity Parameter Error 2 ", "not corret format of credential value");
-			request.getSession().setAttribute("error", errorMessage);
-			response.sendRedirect(getServletContext().getContextPath() + "/cart");
-			return;
-			*/
+		
 		}
-		// only positive values
+		//Acceptable only positive values
 		if (quantity != null && !quantity.equals("")) {
 			if (quantity < 1) {
 				errorMessage = new ErrorMessage("Quantity Parameter Error", "negative quantity");
@@ -164,12 +160,12 @@ public class doAddCart extends HttpServlet {
 			}
 		}
 
-		// Set if user wish decrement the number of items added to cart
+		// Set true only if user wish decrement the number of items added to cart
 		if (request.getParameter("sub") != null && request.getParameter("sub").equals("true")) {
 			decrement = true;
 		}
 
-		// check if really exist a correspondence between vendor to item
+		//Error manage: check if really exist a correspondence between vendor to item
 		PriceDAO priceDAO = new PriceDAO(connection);
 		Price price = new Price();
 		try {
@@ -181,24 +177,20 @@ public class doAddCart extends HttpServlet {
 			return;
 		}
 
-		// Search if vendor is present yet
+		// Search if vendor is already present in cartSession
 		boolean vendorIsPresent = false;
 		if (cartSession.containsKey(vendorAdd)) {
 			vendorIsPresent = true;
 		}
 
-		// If vendor is not present and decrement --> error
+		// If vendor is not present and decrement --> error : is not a possible situation 
 		if (!vendorIsPresent && decrement) {
 			errorMessage = new ErrorMessage("Request Error", "vendor not present in cart");
 			request.getSession().setAttribute("cartSession", cartSession);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
-		/*
-		 * Vendor selectedVendor = null; for (Vendor v : cart.keySet()) { if (v.getId()
-		 * == vendorAdd) { vendorIsPresent = true; selectedVendor = v; } }
-		 */
-
+	
 		if (!vendorIsPresent && !decrement) // vendor is not present
 		{
 			HashMap<Integer, Integer> itemQuantity = new HashMap<Integer, Integer>();
@@ -213,13 +205,7 @@ public class doAddCart extends HttpServlet {
 				isPresent = true;
 			}
 
-			/*
-			 * SelectedItem selectedItem = null; for (SelectedItem s :
-			 * cart.get(selectedVendor)) { if (s.getItem().getId() == itemAdd) { isPresent =
-			 * true; selectedItem = s; } }
-			 */
-
-			// item is not present and decrement
+			// item is not present and decrement --> error : is not a possible situation 
 			if (!isPresent && decrement) {
 				errorMessage = new ErrorMessage("Request Error", "item not present in cart");
 				request.getSession().setAttribute("cartSession", cartSession);
@@ -230,22 +216,7 @@ public class doAddCart extends HttpServlet {
 			if (!isPresent && !decrement) { // if not present create it
 
 				cartSession.get(vendorAdd).put(itemAdd, quantity);
-				/*
-				 * // Collect information about item ItemDAO itemDAO = new ItemDAO(connection);
-				 * Item item = new Item(); try { item = itemDAO.findItemsBySingleId(itemAdd); }
-				 * catch (SQLException e) { e.printStackTrace(); }
-				 * 
-				 * // Collect information about the price of the specific item /* PriceDAO
-				 * priceDAO = new PriceDAO(connection);
-				 * 
-				 * Price price = new Price(); try { price =
-				 * priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd); } catch (SQLException
-				 * e) { e.printStackTrace(); }
-				 * 
-				 * selectedItem = new SelectedItem(); selectedItem.setItem(item);
-				 * selectedItem.setQuantity(quantity); selectedItem.setCost(price.getPrice());
-				 * cart.get(selectedVendor).add(selectedItem);
-				 */
+				
 			} else { // item is already present
 				int actualQuantity = cartSession.get(vendorAdd).get(itemAdd);
 
@@ -265,41 +236,7 @@ public class doAddCart extends HttpServlet {
 				}
 			}
 		}
-		/*
-		 * 
-		 * int actualQuantity = selectedItem.getQuantity(); if (decrement) { if
-		 * (selectedItem.getQuantity() < 2) { // quantity == 1
-		 * cart.get(selectedVendor).remove(selectedItem); if
-		 * (cart.get(selectedVendor).isEmpty()) { cart.remove(selectedVendor); } } else
-		 * { // simply decrement quantity actualQuantity = actualQuantity - quantity;
-		 * selectedItem.setQuantity(actualQuantity); } } else { // increment
-		 * actualQuantity = actualQuantity + quantity;
-		 * selectedItem.setQuantity(actualQuantity); } } }
-		 */
-		/*
-		 * // Collect information about item ItemDAO itemDAO = new ItemDAO(connection);
-		 * Item item = new Item(); try { item = itemDAO.findItemsBySingleId(itemAdd); }
-		 * catch (SQLException e) { e.printStackTrace(); }
-		 * 
-		 * // Collect information about the price of the specific item /* PriceDAO
-		 * priceDAO = new PriceDAO(connection);
-		 * 
-		 * Price price = new Price(); try { price =
-		 * priceDAO.findPriceBySingleItemId(itemAdd, vendorAdd); } catch (SQLException
-		 * e) { e.printStackTrace(); }
-		 * 
-		 * 
-		 * // Collect information about vendor VendorDAO vendorDAO = new
-		 * VendorDAO(connection); Vendor vendor = new Vendor(); try { vendor =
-		 * vendorDAO.findFullBySingleId(vendorAdd); } catch (SQLException e) {
-		 * e.printStackTrace(); }
-		 * 
-		 * SelectedItem selectedItem = new SelectedItem(); selectedItem.setItem(item);
-		 * selectedItem.setQuantity(quantity); selectedItem.setCost(price.getPrice());
-		 * List<SelectedItem> ls = new ArrayList<SelectedItem>(); ls.add(selectedItem);
-		 * cart.put(selectedVendor, ls); }
-		 * 
-		 */
+		
 		request.getSession().setAttribute("cartSession", cartSession);
 		response.sendRedirect(getServletContext().getContextPath() + "/cart");
 

@@ -188,14 +188,6 @@ public class goCart extends HttpServlet {
 			cart.put(vendorCurrent, selectedItemList);
 		}
 
-		/*
-		 * try { cart = (HashMap<Vendor, List<SelectedItem>>)
-		 * session.getAttribute("cart"); } catch (NumberFormatException |
-		 * NullPointerException e) {
-		 * response.sendError(HttpServletResponse.SC_NOT_FOUND, "Resource not found");
-		 * return; }
-		 */
-
 		// Calculate shipping cost and total expenses
 		shipping = new HashMap<Vendor, float[]>(); // <Vendor, [ShippingPrice , Total]>
 
