@@ -58,7 +58,7 @@ public class goHome extends HttpServlet {
 			List<Item> fillerItems = new ArrayList<>();
 
 			try {
-				fillerItems = itemDAO.findManyByCateogoryAndNumber("Books", 5);
+				fillerItems = itemDAO.findManyByCategoryAndNumber("Books", 5);
 			} catch (DatabaseException e) {
 				e.printStackTrace();
 			}

@@ -103,7 +103,7 @@ public class ItemDAO {
 		return viewedItems;
 	}
 
-	public List<Item> findManyByCateogoryAndNumber(String category, int number) throws DatabaseException {
+	public List<Item> findManyByCategoryAndNumber(String category, int number) throws DatabaseException {
 
 		String query = "SELECT * FROM item WHERE category = ? LIMIT ?";
 
@@ -136,7 +136,7 @@ public class ItemDAO {
 	}
 
 	public List<Item> findManyByWord(String research) throws DatabaseException {
-		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%',' ', ? ,' ', '%') OR description LIKE  concat('%',' ', ? ,' ', '%') OR category LIKE  concat('%',' ', ? ,' ', '%') ";
+		String query = "SELECT  id, name, description, category, picture FROM item WHERE name LIKE  concat('%',' ', ? ,' ', '%') OR description LIKE  concat('%',' ', ? ,' ', '%') OR category LIKE  concat( ? ) ";
 		List<Item> searchItems = new ArrayList<Item>();
 		try (PreparedStatement pstatement = con.prepareStatement(query);) {
 			pstatement.setString(1, research);
