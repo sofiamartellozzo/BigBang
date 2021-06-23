@@ -1,0 +1,22 @@
+title doLogout
+
+participantgroup #orange **Client**
+participant ClientWindow
+end 
+
+participantgroup #lightblue **Server**
+participant doLogout
+activate doLogout
+participant session
+activate session
+end 
+
+ClientWindow->doLogout: doGET
+doLogout->session: removeAttribute("<color:#green>user</color>")
+
+
+
+
+
+
+

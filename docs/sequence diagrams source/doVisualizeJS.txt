@@ -1,0 +1,31 @@
+
+title doVisualize
+
+participantgroup #orange **Client**
+participant ClientWindow
+end 
+
+participantgroup #lightblue **Server**
+participant doView
+activate doView
+participant session
+participant ViewDAO
+
+end
+activate ViewDAO
+
+
+ClientWindow->doView: doPOST\n?<color:#red>viewId</color>= & <color:#red>keyword</color>=
+activate session
+doView->session: getAttribute("<color:#green>user</color>")
+session-->doView: User user
+
+doView->ViewDAO:createOneViewByUserIdAndItemId("<color:#red>idUser</color>", "<color:#red>idItemAsked</color>")
+deactivate ViewDAO
+
+
+
+
+deactivate session
+
+

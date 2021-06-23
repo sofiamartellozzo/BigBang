@@ -1,0 +1,22 @@
+title doRegister
+
+participantgroup #orange **Client**
+participant ClientWindow
+end 
+
+participantgroup #lightblue **Server**
+participant doRegister
+activate doRegister
+participant UserDAO
+activate UserDAO
+end
+
+
+ClientWindow->doRegister: doPOST\n?<color:#red>name</color>= & <color:#red>surname</color>= \n& <color:#red>email</color>= & <color:#red>pwd</color>= \n& confirmPwd= & <color:#red>address</color>=
+note left of doRegister #lightgreen :check the validity of the form input
+
+
+doRegister-> UserDAO:createUser(<color:#red>name</color>, <color:#red>surname</color>, <color:#red>email</color>, AuthUtils.encryptString(<color:#red>pwd</color>), <color:#red>address</color>)
+
+
+

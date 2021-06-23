@@ -1,0 +1,37 @@
+
+title doSearch
+
+participantgroup #orange **Client**
+participant ClientWindow
+end 
+
+participantgroup #lightblue **Server**
+participant doSearch
+activate doSearch
+participant session
+participant ItemDAO
+activate ItemDAO
+participant ExtendedItemDAO
+end 
+activate ExtendedItemDAO
+ClientWindow->doSearch: doGet\n?<color:#red>keyword</color>=
+activate session
+doSearch->session: getAttribute("<color:#green>user</color>")
+session-->doSearch: User user
+doSearch->session: removeAttribute("<color:#green>itemSearch</color>")
+
+
+
+
+
+doSearch->ItemDAO:findItemsByWord("<color:#red>keyword</color>")
+
+doSearch<--ItemDAO:List<Item>  //searchItems//
+deactivate ItemDAO
+doSearch->ExtendedItemDAO:findManyItemsDetailsByItemsId(searchItems)
+
+doSearch<--ExtendedItemDAO:List<ExtendedItem>  //extendedItemSearch//
+deactivate ExtendedItemDAO
+deactivate session
+
+doSearch-->ClientWindow: <color:#blue>extendedItemsJson</color>
