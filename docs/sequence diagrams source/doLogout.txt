@@ -1,0 +1,17 @@
+
+title doLogout
+
+participant doLogout
+activate doLogout
+
+participant session
+
+
+
+[->doLogout: doGET
+doLogout->session: removeAttribute("<color:#green>user</color>")
+
+
+participant home.html
+activate home.html
+doLogout->home.html: sendRedirect(/login)

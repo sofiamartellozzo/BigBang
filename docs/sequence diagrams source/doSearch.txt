@@ -1,0 +1,43 @@
+
+title doSearch
+
+participant doSearch
+activate doSearch
+participant session
+participant ItemDAO
+activate ItemDAO
+participant ExtendedItemDAO
+activate ExtendedItemDAO
+[->doSearch: doGet\n?keyword=
+activate session
+doSearch->session: getAttribute("<color:#green>user</color>")
+session-->doSearch: User user
+doSearch->session: getAttribute("<color:#green>itemViewed</color>")\ngetAttribute("<color:#green>itemSearch</color>")\ngetAttribute("<color:#green>clearViewItemList</color>")
+session-->doSearch: List<ExtendedItem> //viewItem//\nList<ExtendedItem> //extendedItemSearch//\nboolean //clearViewedItemList//
+note left of doSearch #lightgreen : check if is a new search, \nin that case remove all the old\n searched and viewed Items
+
+
+doSearch->ItemDAO:findItemsByWord("<color:#red>keyword</color>")
+
+doSearch<--ItemDAO:List<Item>  //searchItems//
+deactivate ItemDAO
+doSearch->ExtendedItemDAO:findManyItemsDetailsByItemsId(searchItems)
+
+doSearch<--ExtendedItemDAO:List<ExtendedItem>  //extendedItemSearch//
+deactivate ExtendedItemDAO
+doSearch->session: setAttribute("<color:#orange>itemSearch</color>", extendedItemSearch)
+doSearch->session: removeAttribute("<color:#green>clearViewItemList</color>")
+
+doSearch->session: getAttribute("<color:#green>cartSession</color>")
+session-->doSearch: HashMap<Integer, HashMap<Integer, Integer>> //cart//
+doSearch->doSearch: HashMap<Integer,Integer> itemsSoldByVendor =\n /* contains how mani items sold by a specific vendor*/
+
+participant WebContext
+activate WebContext
+participant search.html
+deactivate session
+
+doSearch->WebContext:setVariable("<color:#blue>itemViewed</color>", viewItem)\nsetVariable("<color:#blue>searchItem</color>", extendedItemSearch)\nsetVariable("<color:#blue>user</color>", user)\nsetVariable("<color:#blue>keyword</color>", wordSearched)\nsetVariable("<color:#blue>cartInformations</color>", itemsSoldByVendor)
+activate search.html
+deactivate WebContext
+doSearch->search.html: process(WebContext, path)

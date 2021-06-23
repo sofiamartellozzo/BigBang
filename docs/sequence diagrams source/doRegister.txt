@@ -1,0 +1,19 @@
+
+title doRegister
+
+participant doRegister
+activate doRegister
+
+participant UserDAO
+activate UserDAO
+
+
+[->doRegister: doPOST\n?name= & surname= \n& email= & pwd= \n& confirmPwd= & address=
+note left of doRegister #lightgreen :check the validity of the form input
+
+
+doRegister-> UserDAO:createUser(<color:#red>name</color>, <color:#red>surname</color>, <color:#red>email</color>, AuthUtils.encryptString(pwd), <color:#red>address</color>)
+
+participant home.html
+activate home.html
+doRegister->home.html: sendRedirect(/login)

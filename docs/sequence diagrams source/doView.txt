@@ -1,0 +1,28 @@
+
+title doView
+
+participant doView
+activate doView
+participant session
+participant ViewDAO
+activate ViewDAO
+
+
+[->doView: doPOST\n?viewId= & keyword=
+activate session
+doView->session: getAttribute("<color:#green>user</color>")
+session-->doView: User user
+
+doView->ViewDAO:createOneViewByUserIdAndItemId("<color:#red>idUser</color>", "<color:#red>idItemAsked</color>")
+deactivate ViewDAO
+
+doView->session: getAttribute("<color:#green>itemViewed</color>")
+session-->doView: List<Integer> //idItemViewed//
+doView->doView: idItemViewed.add(idItemAsked)
+
+doView->session: setAttribute("<color:#orange>itemViewed</color>", idItemViewed)\nsetAttribute("<color:#orange>clearViewItemList</color>", false)
+deactivate session
+participant doSearch
+activate doSearch
+doView->doSearch: sendRedirect(search?keyword= )
+doSearch->] : doGET\n?keyword=

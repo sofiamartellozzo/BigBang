@@ -29,7 +29,7 @@ import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 public class doSearch extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Connection connection;
 	private TemplateEngine templateEngine;
 
@@ -42,28 +42,28 @@ public class doSearch extends HttpServlet {
 	@SuppressWarnings("unchecked")
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+
 		HttpSession session = request.getSession();
-		
+
 		//get the user by the session
 		User user = (User) session.getAttribute("user");
-		
+
 		//create the variable to store a possible error
     	ErrorMessage errorMessage;
-		
+
 		//get the lists of item searched yet or viewed yet by the session, if there are
 		List<ExtendedItem> viewItem = (List<ExtendedItem>) session.getAttribute("itemViewed");
 		List<ExtendedItem> extendedItemSearch = (List<ExtendedItem>) session.getAttribute("itemSearch");
-		
+
 		//as default remove all viewed items because is a new search
 		boolean clearViewedItemList = true;
 		if(session.getAttribute("clearViewItemList")!=null) {
 			clearViewedItemList = (boolean)session.getAttribute("clearViewItemList");
-		
+
 		}
-		
-		
-		//check if is a new search 
+
+
+		//check if is a new search
 		//so remove all the old viewed Items
 		if (clearViewedItemList) {
 			//each time I do a new search, remove all old items searched and visualized
@@ -71,8 +71,8 @@ public class doSearch extends HttpServlet {
 			request.getSession().removeAttribute("itemViewed");
 			viewItem = null;
 			}
-		
-		
+
+
 
 		// Get the search parameter, so the items asked to be viewed
 		String wordSearched = null;
@@ -94,7 +94,7 @@ public class doSearch extends HttpServlet {
 				//no item visualized yet
 				viewItem = new ArrayList<>();
 			}
-			webContext.setVariable("itemViewed", viewItem);         // no items will be in the List 
+			webContext.setVariable("itemViewed", viewItem);         // no items will be in the List
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
@@ -106,7 +106,7 @@ public class doSearch extends HttpServlet {
 		try {
 			searchItemsId = itemDAO.findManyByWord(wordSearched);
 			extendedItemSearch = extendedItemDAO.findManyItemsDetailsByItemsId(searchItemsId);
-			
+
 			//put the search items in the session, so they now can be find by doView when redirect to search page
 			request.getSession().setAttribute("itemSearch", extendedItemSearch);
 		} catch (DatabaseException e) {
@@ -123,19 +123,18 @@ public class doSearch extends HttpServlet {
 				//no item visualized yet
 				viewItem = new ArrayList<>();
 			}
-			webContext.setVariable("itemViewed", viewItem);         // no items will be in the List 
+			webContext.setVariable("itemViewed", viewItem);         // no items will be in the List
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
-		
-		
+
+
 		if (viewItem == null) {
 			//no item visualized yet
 			viewItem = new ArrayList<>();
 		}
-		
+
 		//set it true so each new search clear the attributes
-		//session.setAttribute("clearViewItemList", true);
 		session.removeAttribute("clearViewItemList");
 		
 		//how many items sold by a specific vendor are in user cart
@@ -163,7 +162,7 @@ public class doSearch extends HttpServlet {
 		webContext.setVariable("cartInformations", itemsSoldByVendor);
 		templateEngine.process(path, webContext, response.getWriter());
 	}
-	
+
 
 
 	public void destroy() {
