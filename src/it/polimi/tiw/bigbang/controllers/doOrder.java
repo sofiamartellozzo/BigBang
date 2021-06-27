@@ -94,6 +94,9 @@ public class doOrder extends HttpServlet {
 		} catch (DatabaseException e) {
 			e.printStackTrace();
 		}
+		
+		cart.remove(vendorID);
+		session.setAttribute("cartSession", cart);
 
 		String path = getServletContext().getContextPath() + "/orders";
 		response.sendRedirect(path);
