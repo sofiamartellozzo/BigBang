@@ -1,0 +1,52 @@
+title goOrders
+
+participantgroup #orange **Client**
+participant home.html
+activate home.html
+participant ordersBuilder
+end
+participantgroup #lightblue **Server**
+participant goOrders
+activate goOrders
+participant session
+participant OrderDAO
+participant ItemDAO
+participant VendorDAO
+end
+
+home.html->goOrders: doGET 
+activate session
+goOrders->session: getAttribute("<color:#green>user</color>")
+session-->goOrders: User user
+deactivate session
+
+activate OrderDAO
+
+goOrders->OrderDAO: findManyByUserID(user.getId())
+OrderDAO-->goOrders:Map<OrderInfo, List<OrderedItem>> orders
+deactivate OrderDAO
+
+note over goOrders #lightgreen: Deconstruct **orders** into:\n- **itemIDs**: list of unique item IDs\n- **vendorIDs**: list of unique vendorIDs
+
+activate ItemDAO
+
+goOrders->ItemDAO:findManyByItemsId(itemIDs)
+ItemDAO-->goOrders:List<Item>itemDetails
+deactivate ItemDAO
+
+activate VendorDAO
+
+goOrders->VendorDAO:findManyByVendorId(vendorIDs)
+VendorDAO-->goOrders:List<Vendor> vendorDetails
+deactivate VendorDAO
+
+goOrders->goOrders: build JSON
+
+goOrders->home.html:    200 OK: <color:#blue>ordersJson  </color>
+
+activate ordersBuilder
+
+home.html->ordersBuilder: buildOrdersList(orders)
+ordersBuilder-->home.html:div container
+
+home.html->home.html: display div

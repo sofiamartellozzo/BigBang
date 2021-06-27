@@ -83,7 +83,11 @@ public class goOrders extends HttpServlet {
 		try {
 			itemDetails = itemDAO.findManyByItemsId(itemIDs);
 		} catch (DatabaseException e) {
-			e.printStackTrace();
+			ErrorMessage errorMessage = new ErrorMessage("Database Error", e.getBody());
+			webContext.setVariable("user", user);
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
 		}
 
 		VendorDAO vendorDAO = new VendorDAO(connection);
@@ -91,7 +95,11 @@ public class goOrders extends HttpServlet {
 		try {
 			vendorDetails = vendorDAO.findManyByVendorsId(vendorIDs);
 		} catch (DatabaseException e) {
-			e.printStackTrace();
+			ErrorMessage errorMessage = new ErrorMessage("Database Error", e.getBody());
+			webContext.setVariable("user", user);
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
 		}
 
 		Map<Integer, Item> itemDetailsMap = new HashMap<>();

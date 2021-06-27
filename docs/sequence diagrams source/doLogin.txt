@@ -1,0 +1,26 @@
+title doLogin
+
+participant doLogin
+activate doLogin
+participant UserDAO
+participant session
+participant home.html
+
+[->doLogin: doPOST\n?<color:#red>email</color>= &<color:#red>pwd</color>=
+note left of doLogin #lightgreen :check the validity of the form input
+
+activate UserDAO
+
+doLogin-> UserDAO: checkCredentials(<color:#red>email</color>, AuthUtils.encryptString(<color:#red>pwd</color>))
+UserDAO-->doLogin:User user
+deactivate UserDAO
+
+activate session
+doLogin->session:setAttribute("<color:#orange>user</color>", user)
+doLogin->session:setAttribute("<color:#orange>cartSession</color>",new HashMap<Integer, HashMap<Integer, Integer>>())
+
+
+deactivate session
+
+activate home.html
+doLogin->home.html: sendRedirect("/home")

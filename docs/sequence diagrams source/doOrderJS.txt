@@ -1,0 +1,70 @@
+title doOrder
+
+participantgroup #orange **Client**
+participant home.html
+activate home.html
+participant sessionStorage
+end
+participantgroup #lightblue **Server**
+participant doOrder
+activate doOrder
+participant session
+participant VendorDAO
+participant ItemDAO
+participant PriceDAO
+participant OrderUtils
+participant OrderDAO
+end
+
+home.html->doOrder: doPOST?<color:#red>vendorId</color>= 
+activate session
+doOrder->session: getAttribute("<color:#green>user</color>")
+session-->doOrder: User user
+
+doOrder->session: getAttribute("<color:#green>cartSession</color>")
+session-->doOrder: Map<Integer, HashMap<Integer, Integer>> cart
+
+activate VendorDAO
+
+doOrder->VendorDAO: findOneByVendorId(<color:#red>vendorId</color>)
+VendorDAO-->doOrder: Vendor vendor
+
+activate ItemDAO
+
+note left of doOrder #lightgreen: get from from the cart\nthe items sold by the \nvendor with id: vendorId
+
+doOrder->ItemDAO:findManyByItemsId(itemIds)
+ItemDAO-->doOrder: List<Item> fullItems
+
+activate PriceDAO
+
+loop for all vendor items  find price details
+
+doOrder->PriceDAO: findOneByItemIdAndVendorId(itemId, <color:#red>vendorId</color>)
+PriceDAO-->doOrder: Price itemPrice
+
+end
+
+activate OrderUtils
+
+doOrder->OrderUtils: calculateShipping(vendor, selectedItems)
+
+activate OrderDAO
+
+OrderUtils-->doOrder: float shipping_cost
+doOrder->OrderDAO: createOrder(userId, <color:#red>vendorId</color>, shipping_cost, selectedItems)
+
+doOrder->session:setAttribute("cartSession", cart)  <- without ordered items
+
+doOrder->home.html: 200 OK: "order created successfully"
+
+activate sessionStorage
+
+home.html->sessionStorage:getItem("cartSession")
+sessionStorage-->home.html:
+
+home.html->home.html:remove ordered items from cart
+
+home.html->sessionStorage:setItem("cartSession", newCart) <- without ordered items
+
+home.html->home.html: goOrders()

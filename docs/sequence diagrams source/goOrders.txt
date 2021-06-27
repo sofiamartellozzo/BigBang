@@ -1,0 +1,44 @@
+title goOrders
+
+participant goOrders
+activate goOrders
+participant session
+participant OrderDAO
+participant ItemDAO
+participant VendorDAO
+participant WebContext
+participant orders.hmtl
+
+[->goOrders: doGET 
+activate session
+goOrders->session: getAttribute("<color:#green>user</color>")
+session-->goOrders: User user
+deactivate session
+
+activate OrderDAO
+
+goOrders->OrderDAO: findManyByUserID(user.getId())
+OrderDAO-->goOrders:Map<OrderInfo, List<OrderedItem>> orders
+deactivate OrderDAO
+
+note over goOrders #lightgreen: Deconstruct **orders** into:\n- **itemIDs**: list of unique item IDs\n- **vendorIDs**: list of unique vendorIDs
+
+activate ItemDAO
+
+goOrders->ItemDAO:findManyByItemsId(itemIDs)
+ItemDAO-->goOrders:List<Item>itemDetails
+deactivate ItemDAO
+
+activate VendorDAO
+
+goOrders->VendorDAO:findManyByVendorId(vendorIDs)
+VendorDAO-->goOrders:List<Vendor> vendorDetails
+deactivate VendorDAO
+
+activate WebContext
+
+goOrders->WebContext: setVariable("user", user)\nsetVariable("orders", orders)\nsetVariable("itemDetails", itemDetailsMap)\nsetVariable("vendorDetails", vendorDetailsMap)
+
+activate orders.hmtl
+
+goOrders->orders.hmtl:process(webContext, "orders")

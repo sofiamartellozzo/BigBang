@@ -1,0 +1,38 @@
+title doLogin
+
+participantgroup #orange **Client**
+participant login.html
+activate login.html
+participant sessionStorage
+participant home.html
+end
+participantgroup #lightblue **Server**
+participant doLogin
+activate doLogin
+participant UserDAO
+participant session
+end
+
+login.html->doLogin: doPOST? <color:#red>email</color>= & <color:#red>pwd</color>=
+note left of doLogin #lightgreen :check the validity of the form input
+
+activate UserDAO
+
+doLogin-> UserDAO: checkCredentials(<color:#red>email</color>, AuthUtils.encryptString(<color:#red>pwd</color>))
+UserDAO-->doLogin:User user
+deactivate UserDAO
+
+activate session
+doLogin->session:setAttribute("<color:#orange>user</color>", user)
+doLogin->session:setAttribute("<color:#orange>cartSession</color>",new HashMap<Integer, HashMap<Integer, Integer>>())
+deactivate session
+
+doLogin->login.html:<color:#blue>userJson</color>
+
+activate sessionStorage
+
+login.html->sessionStorage:setItem('user', userJson)
+deactivate sessionStorage
+
+activate home.html
+login.html->home.html:window.location.href = "home.html"
