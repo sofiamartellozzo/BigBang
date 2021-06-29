@@ -107,6 +107,15 @@ public class doSearch extends HttpServlet {
 			searchItemsId = itemDAO.findManyByWord(wordSearched);
 			extendedItemSearch = extendedItemDAO.findManyItemsDetailsByItemsId(searchItemsId);
 
+			ArrayList<ExtendedItem> itemToRemove = new ArrayList<>();
+			for (ExtendedItem i: extendedItemSearch) {
+				if (i.getValue().keySet().isEmpty() || i.getValue().values().isEmpty()){
+					itemToRemove.add(i);
+				}
+			}
+
+			extendedItemSearch.removeAll(itemToRemove);
+
 			//put the search items in the session, so they now can be find by doView when redirect to search page
 			request.getSession().setAttribute("itemSearch", extendedItemSearch);
 		} catch (DatabaseException e) {
@@ -136,7 +145,7 @@ public class doSearch extends HttpServlet {
 
 		//set it true so each new search clear the attributes
 		session.removeAttribute("clearViewItemList");
-		
+
 		//how many items sold by a specific vendor are in user cart
 				HashMap<Integer,Integer> itemsSoldByVendor = new HashMap<>();
 
