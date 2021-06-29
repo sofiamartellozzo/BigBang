@@ -73,6 +73,12 @@ public class OrderDAO {
 			throws DatabaseException {
 		String orderInfoQuery = "INSERT INTO order_info (`id`,`id_user`,`id_vendor`,`date`,`shipping_cost`) VALUES (?,?,?,?,?)";
 		String orderedItemQuery = "INSERT INTO ordered_item (`id_order`,`id_item`,`quantity`,`cost`) VALUES (?,?,?,?)";
+		
+		try {
+			connection.setAutoCommit(false);
+		} catch (SQLException e2) {
+			e2.printStackTrace();
+		}
 
 		String uuid = UUID.randomUUID().toString();
 
@@ -95,7 +101,15 @@ public class OrderDAO {
 					psItem.executeUpdate();
 				}
 			}
+			connection.commit();
+			connection.setAutoCommit(true);
 		} catch (SQLException e) {
+			try {
+				connection.rollback();
+				connection.setAutoCommit(true);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			throw new DatabaseException("The server couldn't create a new order.");
 		}
 	}
