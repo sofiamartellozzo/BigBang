@@ -27,7 +27,7 @@
         >
           <div class="item-price-row">
             <span class="item-price"
-              ><span th:text="${price.price}">20.99</span>&euro;</span
+              ><span th:text="${#numbers.formatDecimal(price.price, 1, 'COMMA', 2, 'POINT')}">20.99</span>&euro;</span
             >
             <form
               th:action="@{|/doAddCart?vendorId=${vendor.id}&itemId=${item.id}|}"
@@ -60,12 +60,12 @@
               <td th:text="|${range.min} to ${range.max} items|">
                 1 to 3 items
               </td>
-              <td><span th:text="${range.cost}">10</span>&euro;</td>
+              <td><span th:text="${#numbers.formatDecimal(range.cost, 1, 'COMMA', 2, 'POINT')}">10</span>&euro;</td>
             </tr>
           </table>
           <strong
             >FREE SHIPPING after
-            <span th:text="${vendor.free_limit}">30</span>&euro;</strong
+            <span th:text="${#numbers.formatDecimal(vendor.free_limit, 1, 'COMMA', 2, 'POINT')}">30</span>&euro;</strong
           >
         </div>
       </div>
