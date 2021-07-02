@@ -5,7 +5,6 @@ import java.sql.Connection;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,10 +25,10 @@ import it.polimi.tiw.bigbang.utils.TemplateEngineProvider;
 
 public class doRegister extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
+
 	private Connection connection;
 	private TemplateEngine templateEngine;
-       
+
     public void init() throws ServletException {
     	ServletContext servletContext = getServletContext();
 		connection = DBConnectionProvider.getConnection(servletContext);
@@ -44,20 +43,20 @@ public class doRegister extends HttpServlet {
 		templateEngine.process(path, webContext, response.getWriter());
 	}
 
-	
+
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+
 		//create the variable to store a possible error
     	ErrorMessage errorMessage;
-    	
-    	//create the variables 
+
+    	//create the variables
 		String name = null;
 		String surname = null;
 		String email = null;
 		String pwd = null;
 		String confirmPwd = null;
 		String address = null;
-		
+
 		try {
 			name = request.getParameter("name");
 			surname = request.getParameter("surname");
@@ -77,7 +76,7 @@ public class doRegister extends HttpServlet {
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
-		
+
 		if (!pwd.equals(confirmPwd)) {
 			errorMessage = new ErrorMessage("Input Error","No matching passwords");
 			String path = "register";
@@ -87,9 +86,32 @@ public class doRegister extends HttpServlet {
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
-		
+
 		//create new user in DB
 		UserDAO userDAO = new UserDAO(connection);
+
+		int occurency = 0;
+		try {
+			occurency = userDAO.findFromEmail(email);
+		} catch (DatabaseException e) {
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
+			String path = "register";
+			ServletContext servletContext = getServletContext();
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
+		}
+		if (occurency>0) {
+			errorMessage = new ErrorMessage("Input Error","The user has already been registered");
+			String path = "register";
+			ServletContext servletContext = getServletContext();
+			final WebContext webContext = new WebContext(request, response, servletContext, request.getLocale());
+			webContext.setVariable("error", errorMessage);
+			templateEngine.process(path, webContext, response.getWriter());
+			return;
+		}
+		
 		try {
 			userDAO.createUser(name, surname, email, AuthUtils.encryptString(pwd), address);
 		} catch (DatabaseException e) {
@@ -101,13 +123,13 @@ public class doRegister extends HttpServlet {
 			templateEngine.process(path, webContext, response.getWriter());
 			return;
 		}
-		
+
 		//redirect to the login page
 		String loginPath = request.getServletContext().getContextPath() + "/login";
 		response.sendRedirect(loginPath);
-		
-		
-		
+
+
+
 	}
 
 }
