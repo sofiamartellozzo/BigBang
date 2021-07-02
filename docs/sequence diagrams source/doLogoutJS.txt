@@ -2,6 +2,7 @@ title doLogout
 
 participantgroup #orange **Client**
 participant ClientWindow
+participant SessionStorage
 end 
 
 participantgroup #lightblue **Server**
@@ -13,6 +14,10 @@ end
 
 ClientWindow->doLogout: doGET
 doLogout->session: removeAttribute("<color:#green>user</color>")
+doLogout-->ClientWindow: 200 OK
+activate SessionStorage
+ClientWindow->SessionStorage: clear()
+
 
 
 
