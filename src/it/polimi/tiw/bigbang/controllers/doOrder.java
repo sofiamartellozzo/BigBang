@@ -14,6 +14,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.thymeleaf.context.WebContext;
+
+import it.polimi.tiw.bigbang.beans.ErrorMessage;
 import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.SelectedItem;
 import it.polimi.tiw.bigbang.beans.User;
@@ -29,10 +32,11 @@ import it.polimi.tiw.bigbang.utils.OrderUtils;
 public class doOrder extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private Connection connection;
+	private ServletContext servletContext;
 
 	@Override
 	public void init() throws ServletException {
-		ServletContext servletContext = getServletContext();
+		servletContext = getServletContext();
 		connection = DBConnectionProvider.getConnection(servletContext);
 	}
 
@@ -46,9 +50,34 @@ public class doOrder extends HttpServlet {
 		User user = (User) session.getAttribute("user");
 		Map<Integer, HashMap<Integer, Integer>> cart = (Map<Integer, HashMap<Integer, Integer>>) session
 				.getAttribute("cartSession");
+		
+		ErrorMessage errorMessage;
 
 		// get the vendor id from the request
-		int vendorID = Integer.parseInt(request.getParameter("vendorId"));
+		//int vendorID = Integer.parseInt(request.getParameter("vendorId"));
+		Integer vendorID;
+		String vendorString = request.getParameter("vendorId");
+		if (vendorString != null && !vendorString.equals("")) {
+			try {
+				vendorID = Integer.parseInt(vendorString);
+			} catch (NumberFormatException e) {
+				errorMessage= new ErrorMessage("Vendor Parameter Error", "incorret format");
+				request.getSession().setAttribute("error", errorMessage);
+				response.sendRedirect(getServletContext().getContextPath() + "/cart");
+				return;
+			}
+		} else {
+			errorMessage = new ErrorMessage("Vendor Parameter Error", "incorret format");
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
+		}
+		if (vendorID == null || vendorID < 0) {
+			errorMessage = new ErrorMessage("Vendor Parameter Error", "missing or empty value");
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
+		}
 
 		// get the vendor details
 		VendorDAO vendorDAO = new VendorDAO(connection);
@@ -56,11 +85,22 @@ public class doOrder extends HttpServlet {
 		try {
 			vendor = vendorDAO.fineOneByVendorId(vendorID);
 		} catch (DatabaseException e1) {
-			e1.printStackTrace();
+			errorMessage = new ErrorMessage("Vendor Parameter Error", e1.getBody());
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
 		}
 
 		// get all the items with their respective quantities for this vendor
 		HashMap<Integer, Integer> items = cart.get(vendorID);
+		
+		// check if items is empty
+		if (items == null || items.isEmpty()) {
+			errorMessage = new ErrorMessage("Vendor Parameter Error", "you don't have any items from this vendor in your cart");
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
+		}
 
 		// get details for all items
 		ItemDAO itemDAO = new ItemDAO(connection);
@@ -68,7 +108,10 @@ public class doOrder extends HttpServlet {
 		try {
 			fullItems = itemDAO.findManyByItemsId(new ArrayList<>(items.keySet()));
 		} catch (DatabaseException e1) {
-			e1.printStackTrace();
+			errorMessage = new ErrorMessage("Database Error", e1.getBody());
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
 		}
 
 		PriceDAO priceDAO = new PriceDAO(connection);
@@ -81,7 +124,10 @@ public class doOrder extends HttpServlet {
 			try {
 				selectedItem.setCost(priceDAO.findOneByItemIdAndVendorId(i.getId(), vendorID).getPrice());
 			} catch (DatabaseException e) {
-				e.printStackTrace();
+				errorMessage = new ErrorMessage("Database Error", e.getBody());
+				request.getSession().setAttribute("error", errorMessage);
+				response.sendRedirect(getServletContext().getContextPath() + "/cart");
+				return;
 			}
 			selectedItems.add(selectedItem);
 		}
@@ -92,7 +138,10 @@ public class doOrder extends HttpServlet {
 		try {
 			orderDAO.createOrder(user.getId(), vendorID, shipping_cost, selectedItems);
 		} catch (DatabaseException e) {
-			e.printStackTrace();
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
 		}
 		
 		cart.remove(vendorID);

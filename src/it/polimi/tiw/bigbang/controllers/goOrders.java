@@ -54,13 +54,17 @@ public class goOrders extends HttpServlet {
 
 		HttpSession session = request.getSession();
 
+		// space for errors	
+		ErrorMessage errorMessage;
+		errorMessage = (ErrorMessage) session.getAttribute("error");
+
 		User user = (User) session.getAttribute("user");
 		OrderDAO orderDAO = new OrderDAO(connection);
 		Map<OrderInfo, List<OrderedItem>> orders = new LinkedHashMap<>();
 		try {
 			orders = orderDAO.findManyByUserID(user.getId());
 		} catch (DatabaseException e) {
-			ErrorMessage errorMessage = new ErrorMessage("Database Error", e.getBody());
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
 			webContext.setVariable("user", user);
 			webContext.setVariable("error", errorMessage);
 			templateEngine.process(path, webContext, response.getWriter());
@@ -83,7 +87,7 @@ public class goOrders extends HttpServlet {
 		try {
 			itemDetails = itemDAO.findManyByItemsId(itemIDs);
 		} catch (DatabaseException e) {
-			ErrorMessage errorMessage = new ErrorMessage("Database Error", e.getBody());
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
 			webContext.setVariable("user", user);
 			webContext.setVariable("error", errorMessage);
 			templateEngine.process(path, webContext, response.getWriter());
@@ -95,7 +99,7 @@ public class goOrders extends HttpServlet {
 		try {
 			vendorDetails = vendorDAO.findManyByVendorsId(vendorIDs);
 		} catch (DatabaseException e) {
-			ErrorMessage errorMessage = new ErrorMessage("Database Error", e.getBody());
+			errorMessage = new ErrorMessage("Database Error", e.getBody());
 			webContext.setVariable("user", user);
 			webContext.setVariable("error", errorMessage);
 			templateEngine.process(path, webContext, response.getWriter());
@@ -111,6 +115,7 @@ public class goOrders extends HttpServlet {
 			vendorDetailsMap.put(vendorIDs.get(i), vendorDetails.get(i));
 		}
 
+		webContext.setVariable("error", errorMessage);
 		webContext.setVariable("user", user);
 		webContext.setVariable("orders", orders);
 		webContext.setVariable("itemDetails", itemDetailsMap);
