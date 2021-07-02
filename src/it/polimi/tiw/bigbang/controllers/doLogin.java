@@ -84,7 +84,6 @@ public class doLogin extends HttpServlet {
 
 		// If the user exists, add info to the session and go to home page, otherwise
 		// show login page with error message
-
 		String path;
 		if (user == null) {
 			errorMessage = new ErrorMessage("Invalid Credentials",
@@ -96,32 +95,6 @@ public class doLogin extends HttpServlet {
 			return;
 		} else {
 			request.getSession().setAttribute("user", user);
-
-			/*
-			 * // just for debugging HashMap<Vendor, List<SelectedItem>> cart = new
-			 * HashMap<Vendor, List<SelectedItem>>(); // catch information about vendor for
-			 * (int i = 1; i < 3; i++) {
-			 * 
-			 * ItemDAO itemDAO = new ItemDAO(connection); Item item = new Item(); try { item
-			 * = itemDAO.findItemsBySingleId(i); } catch (SQLException e) {
-			 * e.printStackTrace(); }
-			 * 
-			 * // catch price PriceDAO priceDAO = new PriceDAO(connection); Price price =
-			 * new Price(); try { price = priceDAO.findPriceBySingleItemId(i, i); } catch
-			 * (SQLException e) { e.printStackTrace(); }
-			 * 
-			 * // catch information about item VendorDAO vendorDAO = new
-			 * VendorDAO(connection); Vendor vendor = new Vendor(); try { vendor =
-			 * vendorDAO.findFullBySingleId(i); } catch (SQLException e) {
-			 * e.printStackTrace(); }
-			 * 
-			 * SelectedItem selectedItem = new SelectedItem(); selectedItem.setItem(item);
-			 * selectedItem.setQuantity(i+1); selectedItem.setCost(price.getPrice());
-			 * List<SelectedItem> ls = new ArrayList<SelectedItem>(); ls.add(selectedItem);
-			 * cart.put(vendor, ls); }
-			 */
-
-			// request.getSession().setAttribute("cart", cart);
 
 			// [VendorId || ItemId, Quantity]
 			request.getSession().setAttribute("cartSession", new HashMap<Integer, HashMap<Integer, Integer>>());
