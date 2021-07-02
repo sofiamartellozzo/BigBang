@@ -28,7 +28,7 @@ public class UserDAO {
 				}
 			}
 		} catch (SQLException e) {
-			throw new DatabaseException("could not check user credentials.");
+			throw new DatabaseException("The user has already been registered.");
 		}
 	}
 
