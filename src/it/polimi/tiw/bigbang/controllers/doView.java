@@ -16,8 +16,10 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import it.polimi.tiw.bigbang.beans.ErrorMessage;
+import it.polimi.tiw.bigbang.beans.Item;
 import it.polimi.tiw.bigbang.beans.User;
 import it.polimi.tiw.bigbang.beans.View;
+import it.polimi.tiw.bigbang.dao.ItemDAO;
 import it.polimi.tiw.bigbang.dao.ViewDAO;
 import it.polimi.tiw.bigbang.exceptions.DatabaseException;
 import it.polimi.tiw.bigbang.utils.DBConnectionProvider;
@@ -71,6 +73,36 @@ public class doView extends HttpServlet {
 				//errorMessage = new ErrorMessage("Request Error", "not valid Item Id found to be viewed ");
 				throw new Exception("Id asked to be viewed not valid or problem in word searched error");
 			}
+			
+			//check if the id is present in the DB
+			Item item = null;
+			ItemDAO itemDAO = new ItemDAO(connection);
+			try{
+				item = itemDAO.findOneByItemId(idItemAsked);
+			}catch (DatabaseException e1) {
+
+				errorMessage = new ErrorMessage("Request Error","Item not found!");
+				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Problem in finding idItem to visualized!");
+				session.setAttribute("clearViewItemList", false);
+				session.setAttribute("error", errorMessage);
+				String path = getServletContext().getContextPath()+ "/search?keyword="+wordSearchedString;
+			    response.sendRedirect(path);
+				return;
+	      
+			}
+
+			if (item == null) {
+				//item not found in the DB
+				errorMessage = new ErrorMessage("Request Error","Item not found!");
+				
+				//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Problem in finding idItem to visualized!");
+				session.setAttribute("clearViewItemList", false);
+				session.setAttribute("error", errorMessage);
+				String path = getServletContext().getContextPath()+ "/search?keyword="+wordSearchedString;
+			    response.sendRedirect(path);
+				return;
+			}
+
 
 			view = new View();
 			view.setUser_id(idUser);
@@ -79,7 +111,8 @@ public class doView extends HttpServlet {
 			errorMessage = new ErrorMessage("Request Error","Problem in finding idItem to visualized!");
 			//response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Problem in finding idItem to visualized!");
 			session.setAttribute("clearViewItemList", false);
-			String path = getServletContext().getContextPath()+ "/search?keyword=&&error=" +wordSearchedString +errorMessage;
+			session.setAttribute("error", errorMessage);
+			String path = getServletContext().getContextPath()+ "/search?keyword="+wordSearchedString;
 		    response.sendRedirect(path);
 			return;
 		}
@@ -91,7 +124,8 @@ public class doView extends HttpServlet {
 		}catch (DatabaseException e1) {
 			errorMessage = new ErrorMessage("Database Error", e1.getBody());
 			session.setAttribute("clearViewItemList", false);
-			String path = getServletContext().getContextPath()+ "/search?keyword=&&error=" +wordSearchedString +errorMessage;
+			session.setAttribute("error", errorMessage);
+			String path = getServletContext().getContextPath()+ "/search?keyword="+wordSearchedString;
 		    response.sendRedirect(path);
 			return;
 		}
@@ -106,6 +140,7 @@ public class doView extends HttpServlet {
 
 		//reloading the search page set this boolean attribute to false to not lost this and all old item viewed yet
 		session.setAttribute("clearViewItemList", false);
+		
 
 		//redirect to search
 		String path = getServletContext().getContextPath()+ "/search?keyword=" +wordSearchedString;
