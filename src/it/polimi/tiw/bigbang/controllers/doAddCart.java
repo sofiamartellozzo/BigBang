@@ -172,7 +172,14 @@ public class doAddCart extends HttpServlet {
 			price = priceDAO.findOneByItemIdAndVendorId(itemAdd, vendorAdd);
 		} catch (DatabaseException e) {
 			errorMessage = new ErrorMessage("Database Error", e.getBody());
-			request.getSession().setAttribute("cartSession", cartSession);
+			request.getSession().setAttribute("error", errorMessage);
+			response.sendRedirect(getServletContext().getContextPath() + "/cart");
+			return;
+		}
+		
+		if(price == null) {
+			errorMessage = new ErrorMessage("Server Error", "Vendor or item not found");
+			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
@@ -186,7 +193,7 @@ public class doAddCart extends HttpServlet {
 		// If vendor is not present and decrement --> error : is not a possible situation 
 		if (!vendorIsPresent && decrement) {
 			errorMessage = new ErrorMessage("Request Error", "vendor not present in cart");
-			request.getSession().setAttribute("cartSession", cartSession);
+			request.getSession().setAttribute("error", errorMessage);
 			response.sendRedirect(getServletContext().getContextPath() + "/cart");
 			return;
 		}
@@ -208,7 +215,7 @@ public class doAddCart extends HttpServlet {
 			// item is not present and decrement --> error : is not a possible situation 
 			if (!isPresent && decrement) {
 				errorMessage = new ErrorMessage("Request Error", "item not present in cart");
-				request.getSession().setAttribute("cartSession", cartSession);
+				request.getSession().setAttribute("error", errorMessage);
 				response.sendRedirect(getServletContext().getContextPath() + "/cart");
 				return;
 			}
