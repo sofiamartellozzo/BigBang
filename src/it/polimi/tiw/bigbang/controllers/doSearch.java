@@ -59,10 +59,12 @@ public class doSearch extends HttpServlet {
 		// Get the search parameter, so the items asked to be viewed
 				String wordSearched = null;
 				try {
-					wordSearched = request.getParameter("keyword");
-					if (wordSearched == null || wordSearched.isEmpty()) {
+					wordSearched1 = request.getParameter("keyword");
+					if (wordSearched1 == null || wordSearched.isEmpty()) {
 						throw new Exception("Missing or empty credential value");
 					}
+					wordSearched = wordSearched1.replaceAll("[^a-zA-Z0-9]", " "); 
+					print(wordSearched);
 				} catch (Exception e) {
 					errorMessage = new ErrorMessage("Input Error", e.getMessage());
 					String path = "search";
